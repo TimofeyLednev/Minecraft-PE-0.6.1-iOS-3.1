@@ -177,6 +177,7 @@ public:
 	}
 
 	void initDefaultValues();
+	void setFilePath(const std::string& path) { optionsFile.setPath(path); }
 
     std::string getKeyDescription(int i) {
         //Language language = Language.getInstance();
@@ -232,7 +233,7 @@ public:
             //minecraft->textures.reloadAll();
         }
         if (option == &Option::LIMIT_FRAMERATE) limitFramerate = !limitFramerate;
-        if (option == &Option::DIFFICULTY) difficulty = (difficulty + dir) & 3;
+        if (option == &Option::DIFFICULTY) difficulty = (difficulty == 0) ? 2 : 0;
         if (option == &Option::GRAPHICS) {
             fancyGraphics = !fancyGraphics;
             //minecraft->levelRenderer.allChanged();
@@ -267,14 +268,14 @@ public:
             return anaglyph3d;
         if (item == &Option::LIMIT_FRAMERATE)
             return limitFramerate;
+        if (item == &Option::GRAPHICS)
+            return fancyGraphics;
         if (item == &Option::AMBIENT_OCCLUSION)
             return ambientOcclusion;
         if (item == &Option::THIRD_PERSON)
             return thirdPersonView;
         if (item == &Option::HIDE_GUI)
             return hideGui;
-		if (item == &Option::THIRD_PERSON)
-			return thirdPersonView;
 		if (item == &Option::SERVER_VISIBLE)
 			return serverVisible;
 		if (item == &Option::LEFT_HANDED)
@@ -285,6 +286,8 @@ public:
 			return isJoyTouchArea;
 		if (item == &Option::DESTROY_VIBRATION)
 			return destroyVibration;
+		if (item == &Option::DIFFICULTY)
+			return (difficulty == 0);
 		return false;
 	}
 
@@ -312,6 +315,7 @@ public:
 	void addOptionToSaveOutput(StringVector& stringVector, std::string name, bool boolValue);
 	void addOptionToSaveOutput(StringVector& stringVector, std::string name, float floatValue);
 	void addOptionToSaveOutput(StringVector& stringVector, std::string name, int intValue);
+	void addOptionToSaveOutput(StringVector& stringVector, std::string name, const std::string& stringValue);
 	void notifyOptionUpdate(const Option* option, bool value);
 	void notifyOptionUpdate(const Option* option, float value);
 	void notifyOptionUpdate(const Option* option, int value);

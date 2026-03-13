@@ -29,10 +29,12 @@ public:
 private:
 	Touch::THeader* bHeader;
 	ImageButton* btnClose;
+	Touch::TButton* btnUsername;
 	std::vector<Touch::TButton*> categoryButtons;
 	std::vector<OptionsPane*> optionPanes;
 	OptionsPane* currentOptionPane;
 	int selectedCategory;
+	bool waitingForUsername;
 };
 
 #endif /*NET_MINECRAFT_CLIENT_GUI_SCREENS__OptionsScreen_H__*/

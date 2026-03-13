@@ -132,8 +132,8 @@ const Options::Option
 	Options::Option::VIEW_BOBBING		 (5, "options.viewBobbing",	false, true),
 	Options::Option::ANAGLYPH			 (6, "options.anaglyph",		false, true),
 	Options::Option::LIMIT_FRAMERATE	 (7, "options.limitFramerate",false, true),
-	Options::Option::DIFFICULTY			 (8, "options.difficulty",	false, false),
-	Options::Option::GRAPHICS			 (9, "options.graphics",		false, false),
+	Options::Option::DIFFICULTY			 (8, "options.difficulty",	false, true),
+	Options::Option::GRAPHICS			 (9, "options.graphics",		false, true),
 	Options::Option::AMBIENT_OCCLUSION	 (10, "options.ao",		false, true),
 	Options::Option::GUI_SCALE			 (11, "options.guiScale",	false, false),
 	Options::Option::THIRD_PERSON		 (12, "options.thirdperson",	false, true),
@@ -152,8 +152,8 @@ const float Options::MUSIC_MIN_VALUE = 0.0f;
 const float Options::MUSIC_MAX_VALUE = 1.0f;
 const float Options::SENSITIVITY_MIN_VALUE = 0.0f;
 const float Options::SENSITIVITY_MAX_VALUE = 1.0f;
-const float Options::PIXELS_PER_MILLIMETER_MIN_VALUE = 3.0f;
-const float Options::PIXELS_PER_MILLIMETER_MAX_VALUE = 4.0f;
+const float Options::PIXELS_PER_MILLIMETER_MIN_VALUE = 2.0f;
+const float Options::PIXELS_PER_MILLIMETER_MAX_VALUE = 10.0f;
 const int DIFFICULY_LEVELS[] = {
 	Difficulty::PEACEFUL,
 	Difficulty::NORMAL
@@ -226,6 +226,9 @@ void Options::update()
 		if (key == OptionStrings::Graphics_Fancy) {
 			readBool(value, fancyGraphics);
 		}
+		if (key == OptionStrings::Graphics_PixelsPerMillimeter) {
+			readFloat(value, pixelsPerMillimeter);
+		}
 		if (key == OptionStrings::Graphics_LowQuality) {
 			bool isLow;
 			readBool(value, isLow);
@@ -293,8 +296,11 @@ void Options::load()
 void Options::save()
 {
 	StringVector stringVec;
-	// Game
+	// Account
+	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_Username, username);
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_ServerVisible, serverVisible);
+
+	// Game
 	addOptionToSaveOutput(stringVec, OptionStrings::Game_DifficultyLevel, difficulty);
 
 	// Input
@@ -304,7 +310,13 @@ void Options::save()
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchScreen, useTouchScreen);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_UseTouchJoypad, isJoyTouchArea);
 	addOptionToSaveOutput(stringVec, OptionStrings::Controls_FeedbackVibration, destroyVibration);
-// 
+
+	// Graphics
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_Fancy, fancyGraphics);
+	addOptionToSaveOutput(stringVec, OptionStrings::Graphics_PixelsPerMillimeter, pixelsPerMillimeter);
+
+	optionsFile.save(stringVec);
+//
 // 	static const Option MUSIC;
 // 	static const Option SOUND;
 // 	static const Option INVERT_MOUSE;
@@ -361,6 +373,11 @@ void Options::addOptionToSaveOutput(StringVector& stringVector, std::string name
 void Options::addOptionToSaveOutput(StringVector& stringVector, std::string name, int intValue) {
 	std::stringstream ss;
 	ss << name << ":" << intValue;
+	stringVector.push_back(ss.str());
+}
+void Options::addOptionToSaveOutput(StringVector& stringVector, std::string name, const std::string& stringValue) {
+	std::stringstream ss;
+	ss << name << ":" << stringValue;
 	stringVector.push_back(ss.str());
 }
 

@@ -23,7 +23,7 @@
 //@class AppPlatform_iOS;
 @class BaseDialogController;
 
-@interface minecraftpeViewController : UIViewController<IASKSettingsDelegate> {
+@interface minecraftpeViewController : UIViewController<IASKSettingsDelegate, UIAlertViewDelegate> {
     EAGLContext *context;
     
     // App and AppPlatform
@@ -66,6 +66,7 @@
 - (void)showDialog_CreateWorld;
 - (void)showDialog_MainMenuOptions;
 - (void)showDialog_RenameMPWorld;
+- (void)showDialog_SetUsername;
 
 - (void)showKeyboard;
 - (void)hideKeyboard;

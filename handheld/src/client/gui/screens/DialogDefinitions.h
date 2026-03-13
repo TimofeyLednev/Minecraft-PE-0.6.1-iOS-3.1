@@ -7,6 +7,7 @@ public:
 	static const int DIALOG_NEW_CHAT_MESSAGE = 2;
 	static const int DIALOG_MAINMENU_OPTIONS = 3;
 	static const int DIALOG_RENAME_MP_WORLD  = 4;
+	static const int DIALOG_SET_USERNAME = 5;
     static const int DIALOG_DEMO_FEATURE_DISABLED = 98;
 };
 

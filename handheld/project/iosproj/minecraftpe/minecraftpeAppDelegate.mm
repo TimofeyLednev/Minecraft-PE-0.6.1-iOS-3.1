@@ -52,7 +52,10 @@ NSError* audioSessionError = nil;
     // Override point for customization after application launch.
     [self initAudio];
 
-    self.window.rootViewController = self.viewController;
+    // iOS 3.0 compatibility: UIWindow.rootViewController was introduced in iOS 4.0
+    [self.window addSubview:self.viewController.view];
+    [self.window makeKeyAndVisible];
+    
 #ifndef ANDROID_PUBLISH
     NSLog(@"ViewController: %p\n", self.viewController);
 #endif

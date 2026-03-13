@@ -12,6 +12,10 @@ OptionsFile::OptionsFile() {
 #endif
 }
 
+void OptionsFile::setPath(const std::string& path) {
+	settingsPath = path + "/options.txt";
+}
+
 void OptionsFile::save(const StringVector& settings) {
 	FILE* pFile = fopen(settingsPath.c_str(), "w");
 	if(pFile != NULL) {
@@ -24,12 +28,21 @@ void OptionsFile::save(const StringVector& settings) {
 
 StringVector OptionsFile::getOptionStrings() {
 	StringVector returnVector;
-	FILE* pFile = fopen(settingsPath.c_str(), "w");
+	FILE* pFile = fopen(settingsPath.c_str(), "r");
 	if(pFile != NULL) {
 		char lineBuff[128];
 		while(fgets(lineBuff, sizeof lineBuff, pFile)) {
-			if(strlen(lineBuff) > 2)
-				returnVector.push_back(std::string(lineBuff));
+			// Strip trailing newline
+			size_t len = strlen(lineBuff);
+			if(len > 0 && lineBuff[len - 1] == '\n')
+				lineBuff[len - 1] = '\0';
+			std::string line(lineBuff);
+			// Split on ':' into key and value
+			size_t sep = line.find(':');
+			if(sep != std::string::npos && sep + 1 < line.size()) {
+				returnVector.push_back(line.substr(0, sep));
+				returnVector.push_back(line.substr(sep + 1));
+			}
 		}
 		fclose(pFile);
 	}

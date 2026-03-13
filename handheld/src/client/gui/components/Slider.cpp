@@ -9,6 +9,7 @@ Slider::Slider(Minecraft* minecraft, const Options::Option* option,  float progr
 : sliderType(SliderProgress), mouseDownOnElement(false), option(option), numSteps(0), progressMin(progressMin), progressMax(progressMax) {
 	if(option != NULL) {
 		percentage = (minecraft->options.getProgressValue(option) - progressMin) / (progressMax - progressMin);
+		percentage = Mth::clamp(percentage, 0.0f, 1.0f);
 	}
 }
 

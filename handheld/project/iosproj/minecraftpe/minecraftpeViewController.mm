@@ -188,17 +188,21 @@ static NSThread* lastThread = nil;
 - (void)startAnimation
 {
     if (!animating) {
-        CADisplayLink *aDisplayLink = [[UIScreen mainScreen] displayLinkWithTarget:self selector:@selector(drawFrame)];
-        [aDisplayLink setFrameInterval:animationFrameInterval];
-        [aDisplayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        self.displayLink = aDisplayLink;
-
-        //[self initView];
-        //NSLog(@"start-animation: %@\n", [NSThread currentThread]);
-
+        // Use direct class call for iOS 3.1 compatibility (UIScreen method is 4.0+)
+        Class displayLinkClass = NSClassFromString(@"CADisplayLink");
+        
+        if (displayLinkClass) {
+            self.displayLink = [displayLinkClass displayLinkWithTarget:self selector:@selector(drawFrame)];
+            
+            // Check for frameInterval support (standard for 3.1+)
+            if ([self.displayLink respondsToSelector:@selector(setFrameInterval:)]) {
+                [self.displayLink setFrameInterval:animationFrameInterval];
+            }
+            
+            [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        }
+        
         animating = TRUE;
-
-        //((Minecraft*)_app)->resetServerSocket(true);
     }
 }
 
@@ -245,9 +249,10 @@ static NSThread* lastThread = nil;
 
     _app->update();
 
-    const GLenum discards[]  = {GL_DEPTH_ATTACHMENT};
+    const GLenum discards[]  = {GL_DEPTH_ATTACHMENT_OES};
 //    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards);    
+    if (glDiscardFramebufferEXT != NULL)
+        glDiscardFramebufferEXT(GL_FRAMEBUFFER_OES, 1, discards);    
 
     [(EAGLView *)self.view presentFramebuffer];
 }
@@ -452,6 +457,13 @@ static NSThread* lastThread = nil;
         //NSLog(@"--- %p %p\n", _dialog, [self view]);
         //[_dialog addToView:[self view]];
     }
+}
+
+- (void)showDialog_SetUsername
+{
+    // UIAlertViewStylePlainTextInput requires iOS 5+, not available on iOS 4.x
+    // Username can be set via Settings (IASKAppSettingsViewController)
+    _dialogResultStatus = 0;
 }
 
 - (int) getUserInputStatus {

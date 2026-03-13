@@ -38,11 +38,14 @@ void AppPlatform_iOS::showDialog(int dialogId) {
     if (dialogId == DialogDefinitions::DIALOG_RENAME_MP_WORLD) {
         [_viewController showDialog_RenameMPWorld];
     }
+    if (dialogId == DialogDefinitions::DIALOG_SET_USERNAME) {
+        [_viewController showDialog_SetUsername];
+    }
     if (dialogId == DialogDefinitions::DIALOG_DEMO_FEATURE_DISABLED) {
         UIAlertView *a = [[UIAlertView alloc]
-            initWithTitle:@"" 
-            message:@"Feature not enabled for this demo" 
-            delegate:nil 
+            initWithTitle:@""
+            message:@"Feature not enabled for this demo"
+            delegate:nil
             cancelButtonTitle:@"OK"
             otherButtonTitles:nil];
         [a show];
@@ -279,7 +282,7 @@ void AppPlatform_iOS::hideKeyboard() {
     [_viewController hideKeyboard];
 	super::hideKeyboard();
 }
-void AppPlatform_iOS::isPowerVR() {
+bool AppPlatform_iOS::isPowerVR() {
 	const char* s = (const char*)glGetString(GL_RENDERER);
 	if (!s) return false;
 	return strstr(s, "SGX") != NULL;

@@ -1134,6 +1134,7 @@ bool Minecraft::supportNonTouchScreen() {
 void Minecraft::init()
 {
 	options.minecraft = this;
+	options.setFilePath(externalStoragePath);
 	options.initDefaultValues();
 #ifndef STANDALONE_SERVER
 	checkGlError("Init enter");
