@@ -1,4 +1,4 @@
-# Minecraft PE 0.6.1 for iOS 4.0 (intended for iPhone OS 3.1)
+# Minecraft PE 0.6.1 for iOS 4.0 (feature for iPhone OS 3.1)
 An attempt to add iPhone OS 3.1 support, which failed because when running on a real iPhone 3GS, the game shows an eternal black screen. However, it works on iOS 4.0, and OpenGL ES 2.0 has been completely removed in favor of OpenGL ES 1.1, so you can play on iOS 4.0+ with iPhone 3G (ARMv6).
 
 
