@@ -12,7 +12,7 @@ An attempt to add iPhone OS 3.1 support, which failed because when running on a 
 
 # Building
 
-Install Xcode 4.1 (may work with 4.0 and 4.2–4.4.1, but not tested). Set the system date to February 25, 2012, then open the folder `handheld/project/iosproj`, open the `.xcodeproj` file and compile.
+Install Xcode 4.1 (may work with 4.0 and 4.2–4.4.1, but not tested). Set the system date to February 25, 2012, then after installing open the folder `handheld/project/iosproj`, open the `.xcodeproj` file and compile.
 
 
 # Help needed with iPhone OS 3.1
