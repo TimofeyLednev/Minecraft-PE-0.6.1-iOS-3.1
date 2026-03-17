@@ -7,7 +7,6 @@ An attempt to add iPhone OS 3.1 support, which failed because when running on a 
 - OpenGL ES 2.0 has been completely replaced by OpenGL ES 1.1
 - Game settings are working (almost)
 - Objective-C code has been migrated to be compatible with iPhone OS 3.1, although on iPhone OS 3.1 the game freezes on a black screen. Tested on iPhone 3GS with iOS 4.2.1, should work on iOS 4.0 since glDiscardFramebufferEXT was introduced in iOS 4.0.
-- iPad xib files were removed because Xcode 4.1 failed to open them with the error: "The document "CreateNewWorld_ipad.xib" could not be opened. The operation couldn't be completed. *** -[__NSArrayM insertObject:atIndex:]: object cannot be nil." They may be fixed and restored in the future.
 
 
 # Building
