@@ -461,9 +461,36 @@ static NSThread* lastThread = nil;
 
 - (void)showDialog_SetUsername
 {
-    // UIAlertViewStylePlainTextInput requires iOS 5+, not available on iOS 4.x
-    // Username can be set via Settings (IASKAppSettingsViewController)
-    _dialogResultStatus = 0;
+    // We need iOS 3.1 compatibility, so we can't rely on
+    // UIAlertViewStylePlainTextInput (iOS 5+). Reuse existing dialog
+    // implementation that already contains a UITextField.
+    if (!_dialog) {
+        BOOL isIpad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+        CGRect screen = [[UIScreen mainScreen] bounds];
+        CGFloat width  = MAX(screen.size.width, screen.size.height);
+        BOOL isIphone5 = (width == 568);
+
+        NSString* xib = isIpad ? @"RenameMPWorld_ipad" : (isIphone5? @"RenameMPWorld_iphone5" : @"RenameMPWorld_iphone");
+        RenameMPWorldViewController* dlg = [[RenameMPWorldViewController alloc] initWithNibName:xib bundle:[NSBundle mainBundle]];
+
+        // Force nib load so outlets like _textName exist.
+        (void)[dlg view];
+
+        // Small UI tweak.
+        if (dlg->_labelName) {
+            dlg->_labelName.text = @"Username";
+        }
+
+        // Pre-fill current username.
+        NSString* currentUsername = [NSString stringWithUTF8String:((Minecraft*)_app)->options.username.c_str()];
+        if (dlg->_textName) {
+            dlg->_textName.text = currentUsername;
+        }
+
+        _dialog = dlg;
+        [self presentModalViewController:_dialog animated:YES];
+        [self initDialog];
+    }
 }
 
 - (int) getUserInputStatus {

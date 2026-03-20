@@ -1,5 +1,11 @@
 #include "LocklessTypes.h"
 
+#if defined(__APPLE__)
+// iOS ARMv6 doesn't reliably provide GCC __sync_fetch_and_add_* runtime symbols.
+// Use Apple's OSAtomic operations instead.
+#include <libkern/OSAtomic.h>
+#endif
+
 using namespace RakNet;
 
 LocklessUint32_t::LocklessUint32_t()
@@ -21,6 +27,9 @@ uint32_t LocklessUint32_t::Increment(void)
 	v=value;
 	mutex.Unlock();
 	return v;
+#elif defined(__APPLE__)
+	// Returns the value AFTER increment.
+	return (uint32_t)OSAtomicIncrement32Barrier((volatile int32_t*)&value);
 #else
 	return __sync_fetch_and_add (&value, (uint32_t) 1);
 #endif
@@ -36,6 +45,9 @@ uint32_t LocklessUint32_t::Decrement(void)
 	v=value;
 	mutex.Unlock();
 	return v;
+#elif defined(__APPLE__)
+	// Returns the value AFTER decrement.
+	return (uint32_t)OSAtomicDecrement32Barrier((volatile int32_t*)&value);
 #else
 	return __sync_fetch_and_add (&value, (uint32_t) -1);
 #endif

@@ -8,6 +8,10 @@
 // __sync_fetch_and_add not supported apparently
 #include "SimpleMutex.h"
 #endif
+#if defined(__APPLE__)
+// __sync_fetch_and_add not supported on ARMv6
+#include <libkern/OSAtomic.h>
+#endif
 
 namespace RakNet
 {

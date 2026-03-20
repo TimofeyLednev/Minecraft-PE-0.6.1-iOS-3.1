@@ -10,6 +10,7 @@
 
 @interface RenameMPWorldViewController : BaseDialogController<UITextFieldDelegate>
 {
+@public
     IBOutlet UILabel* _labelName;
 
     IBOutlet UITextField* _textName;
