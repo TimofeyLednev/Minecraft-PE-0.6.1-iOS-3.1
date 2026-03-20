@@ -39,10 +39,10 @@ OptionsGroup& OptionsGroup::addOptionItem( const Options::Option* option, Minecr
 
 void OptionsGroup::createToggle( const Options::Option* option, Minecraft* minecraft ) {
 	ImageDef def;
-	def.setSrc(IntRectangle(160, 206, 39, 20));
+	def.setSrc(IntRectangle(160, 206, 38, 19));
 	def.name = "gui/touchgui.png";
-	def.width = 39 * 0.7f;
-	def.height = 20 * 0.7f;
+	def.width = 38 * 1.0f;
+	def.height = 19 * 1.0f;
 	OptionButton* element = new OptionButton(option);
 	element->setImageDef(def, true);
 	element->updateImage(&minecraft->options);
