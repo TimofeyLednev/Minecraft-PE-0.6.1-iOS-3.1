@@ -6,7 +6,7 @@ An attempt to add iPhone OS 3.1 support, which failed because when running on a 
 - Project migrated from iOS 6.0 SDK + Xcode 4.5 or 4.6 to Xcode 4.1 + iOS 4.3 SDK
 - OpenGL ES 2.0 has been completely replaced by OpenGL ES 1.1
 - Game settings are working (almost)
-- Objective-C code has been migrated to be compatible with iPhone OS 3.1, although on iPhone OS 3.1 the game freezes on a black screen. Tested on iPhone 3GS with iOS 4.2.1, should work on iOS 4.0 since glDiscardFramebufferEXT was introduced in iOS 4.0.
+- Objective-C code has been migrated to be compatible with iPhone OS 3.1, although on iPhone OS 3.1 the game freezes on a black screen. Tested on iPhone 3GS with iOS 4.2.1 everything works fine, should work on iOS 4.0 since glDiscardFramebufferEXT was introduced in iOS 4.0.
 - Fixed building using VS2022 for quick testing of new changes
 
 # Building
