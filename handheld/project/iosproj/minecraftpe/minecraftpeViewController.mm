@@ -267,6 +267,8 @@ static NSThread* lastThread = nil;
 {
     viewScale = ((EAGLView*)self.view)->viewScale;
     
+    if (viewScale <= 0.0f) viewScale = 1.0f;
+    
     if (!_app->isInited())
         _app->init(*_context);
     else
@@ -276,10 +278,12 @@ static NSThread* lastThread = nil;
     CGFloat width  = MAX(screen.size.width, screen.size.height) * viewScale;
     CGFloat height = MIN(screen.size.width, screen.size.height) * viewScale;
     
-//    CGFloat width  = ((EAGLView*)self.view)->framebufferWidth;
-//    CGFloat height = ((EAGLView*)self.view)->framebufferHeight;
+    if (width <= 0 || height <= 0) {
+        NSLog(@"initView: bad size %fx%f, skipping setSize", width, height);
+        return false;
+    }
     
-    //NSLog(@"initView. Setting size: %f, %f\n", width, height);
+    NSLog(@"initView: calling setSize(%d, %d) viewScale=%f", (int)width, (int)height, viewScale);
     _app->setSize((int)width, (int)height);
     
     return true;

@@ -88,18 +88,31 @@
         glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &framebufferHeight);
         
         glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, colorRenderbuffer);
-  
+        
         // Create depth buffer and allocate backing store
         glGenRenderbuffersOES(1, &_depthRenderBuffer);
 		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _depthRenderBuffer);
-
-        glRenderbufferStorageOES(GL_RENDERBUFFER_OES, GL_DEPTH_COMPONENT24_OES, framebufferWidth, framebufferHeight);
+        
+        GLenum depthFormat = GL_DEPTH_COMPONENT16_OES;
+		const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+		if (extensions && strstr(extensions, "GL_OES_depth24")) {
+			depthFormat = GL_DEPTH_COMPONENT24_OES;
+		}
+		glRenderbufferStorageOES(GL_RENDERBUFFER_OES, depthFormat, framebufferWidth, framebufferHeight);
 		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, _depthRenderBuffer);
-       
+        
         NSLog(@"Created framebuffer with size %d, %d\n", framebufferWidth, framebufferHeight);
         
         if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES)
             NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+        
+		GLenum status = glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES);
+		if (status != GL_FRAMEBUFFER_COMPLETE_OES) {
+			NSLog(@"FRAMEBUFFER INCOMPLETE: 0x%x", status);
+			// 0x8CD6 = INCOMPLETE_ATTACHMENT
+			// 0x8CD7 = INCOMPLETE_MISSING_ATTACHMENT  
+			// 0x8CD9 = INCOMPLETE_DIMENSIONS
+		}
     }
 }
 
@@ -116,6 +129,10 @@
         if (colorRenderbuffer) {
             glDeleteRenderbuffersOES(1, &colorRenderbuffer);
             colorRenderbuffer = 0;
+        }
+        if (_depthRenderBuffer) {
+            glDeleteRenderbuffersOES(1, &_depthRenderBuffer);
+            _depthRenderBuffer = 0;
         }
     }
 }
