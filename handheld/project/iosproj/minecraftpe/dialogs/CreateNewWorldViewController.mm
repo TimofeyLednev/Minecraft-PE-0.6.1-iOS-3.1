@@ -104,7 +104,6 @@ static const char* getGameModeName(int mode) {
     UIFont* fontLarge = nil;
     UIFont* fontSmall = nil;
 
-    // Пробуем загрузить minecraft шрифт, если нет - Helvetica
     UIFont* mcLarge = nil;
     UIFont* mcSmall = nil;
     
