@@ -75,14 +75,18 @@
 
     if (isIpad) {
         [self resizeView:_textName width:-1 height:48];
-        self.view.backgroundColor = [UIColor colorWithPatternImage: [UIImage imageNamed:@"bg128.png"] ];
-        fontLarge = [UIFont fontWithName:@"minecraft" size:24];
-        fontSmall = [UIFont fontWithName:@"minecraft" size:18];
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg128.png"]];
+        UIFont* mc = [UIFont fontWithName:@"minecraft" size:24];
+        fontLarge = mc ? mc : [UIFont fontWithName:@"Helvetica" size:24];
+        mc = [UIFont fontWithName:@"minecraft" size:18];
+        fontSmall = mc ? mc : [UIFont fontWithName:@"Helvetica" size:18];
     } else {
         [self resizeView:_textName width:-1 height:32];
-        self.view.backgroundColor = [UIColor colorWithPatternImage: [UIImage imageNamed:@"bg64.png"] ];
-        fontLarge = [UIFont fontWithName:@"minecraft" size:16];
-        fontSmall = [UIFont fontWithName:@"minecraft" size: 14];
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg64.png"]];
+        UIFont* mc = [UIFont fontWithName:@"minecraft" size:16];
+        fontLarge = mc ? mc : [UIFont fontWithName:@"Helvetica" size:16];
+        mc = [UIFont fontWithName:@"minecraft" size:14];
+        fontSmall = mc ? mc : [UIFont fontWithName:@"Helvetica" size:14];
     }
 
     UIView *paddingView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 4, 20)] autorelease];

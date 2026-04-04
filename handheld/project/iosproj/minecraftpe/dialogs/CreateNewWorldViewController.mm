@@ -104,18 +104,26 @@ static const char* getGameModeName(int mode) {
     UIFont* fontLarge = nil;
     UIFont* fontSmall = nil;
 
+    // Пробуем загрузить minecraft шрифт, если нет - Helvetica
+    UIFont* mcLarge = nil;
+    UIFont* mcSmall = nil;
+    
     if (isIpad) {
         [self resizeView:_textName width:-1 height:48];
         [self resizeView:_textSeed width:-1 height:48];
-        self.view.backgroundColor = [UIColor colorWithPatternImage: [UIImage imageNamed:@"bg128.png"] ];
-        fontLarge = [UIFont fontWithName:@"minecraft" size:28];
-        fontSmall = [UIFont fontWithName:@"minecraft" size:24];
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg128.png"]];
+        mcLarge = [UIFont fontWithName:@"minecraft" size:28];
+        mcSmall = [UIFont fontWithName:@"minecraft" size:24];
+        fontLarge = mcLarge ? mcLarge : [UIFont fontWithName:@"Helvetica" size:28];
+        fontSmall = mcSmall ? mcSmall : [UIFont fontWithName:@"Helvetica" size:24];
     } else {
         [self resizeView:_textName width:-1 height:32];
         [self resizeView:_textSeed width:-1 height:32];
-        self.view.backgroundColor = [UIColor colorWithPatternImage: [UIImage imageNamed:@"bg64.png"] ];
-        fontLarge = [UIFont fontWithName:@"minecraft" size:16];
-        fontSmall = [UIFont fontWithName:@"minecraft" size: 14];
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg64.png"]];
+        mcLarge = [UIFont fontWithName:@"minecraft" size:16];
+        mcSmall = [UIFont fontWithName:@"minecraft" size:14];
+        fontLarge = mcLarge ? mcLarge : [UIFont fontWithName:@"Helvetica" size:16];
+        fontSmall = mcSmall ? mcSmall : [UIFont fontWithName:@"Helvetica" size:14];
     }
 
     UIView *paddingView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 4, 20)] autorelease];
