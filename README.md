@@ -1,5 +1,5 @@
 # Minecraft PE 0.6.1 for iOS 3.1
-An attempt to add iPhone OS 3.1 support and this successfully, OpenGL ES 2.0 has been completely removed in favor of OpenGL ES 1.1, so you can play on iOS 3.1+ with iPhone 2G (ARMv6).
+An attempt to add iPhone OS 3.1 support and this successfully, OpenGL ES 2.0 has been completely removed in favor of OpenGL ES 1.1, so you can play on iPhone 2G with iOS 3.1+.
 
 
 # What changed?
