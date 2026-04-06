@@ -101,6 +101,18 @@
 
     _textName.delegate = self;
     [_textName becomeFirstResponder];
+	
+    BOOL isIOS3 = [[[UIDevice currentDevice] systemVersion] floatValue] < 3.2f;
+    if (isIOS3) {
+        for (UIView* v in self.view.subviews) {
+            if ([v isKindOfClass:[UIButton class]]) {
+                UIButton* btn = (UIButton*)v;
+                [btn setImage:[UIImage imageNamed:@"save_0_1.png"] forState:UIControlStateNormal];
+                [btn setImage:[UIImage imageNamed:@"save_1_1.png"] forState:UIControlStateHighlighted];
+                break;
+            }
+        }
+    }
 }
 
 - (void)viewDidUnload

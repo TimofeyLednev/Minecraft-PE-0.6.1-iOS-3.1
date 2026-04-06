@@ -37,23 +37,25 @@ static const char* getGameModeName(int mode) {
 }
 
 - (void) UpdateGameModeDesc
-{    
-    if (_currentGameModeId == GameMode_Creative) {
+{
+    BOOL isIOS3 = [[[UIDevice currentDevice] systemVersion] floatValue] < 3.2f;
+    
+    NSString *normal, *highlighted;
+    if (isIOS3) {
+        normal      = (_currentGameModeId == GameMode_Creative) ? @"creative_0_3.png" : @"survival_0_3.png";
+        highlighted = (_currentGameModeId == GameMode_Creative) ? @"creative_1_3.png" : @"survival_1_3.png";
+    } else {
+        normal      = (_currentGameModeId == GameMode_Creative) ? @"creative_0_4.png" : @"survival_0_4.png";
+        highlighted = (_currentGameModeId == GameMode_Creative) ? @"creative_1_4.png" : @"survival_1_4.png";
+    }
+    
+    if (_currentGameModeId == GameMode_Creative)
         [_labelGameModeDesc setText:@"Unlimited resources, flying"];
-        
-        UIImage *img = [UIImage imageNamed:@"creative_0_4.png"];
-        [_btnGameMode setImage:img forState:UIControlStateNormal];
-        UIImage *img2 = [UIImage imageNamed:@"creative_1_4.png"];
-        [_btnGameMode setImage:img2 forState:UIControlStateHighlighted];
-    }
-    if (_currentGameModeId == GameMode_Survival) {
+    else
         [_labelGameModeDesc setText:@"Mobs, health and gather resources"];
-
-        UIImage *img = [UIImage imageNamed:@"survival_0_4.png"];
-        [_btnGameMode setImage:img forState:UIControlStateNormal];
-        UIImage *img2 = [UIImage imageNamed:@"survival_1_4.png"];
-        [_btnGameMode setImage:img2 forState:UIControlStateHighlighted];
-    }
+    
+    [_btnGameMode setImage:[UIImage imageNamed:normal]      forState:UIControlStateNormal];
+    [_btnGameMode setImage:[UIImage imageNamed:highlighted] forState:UIControlStateHighlighted];
 }
 
 #pragma mark - View lifecycle
