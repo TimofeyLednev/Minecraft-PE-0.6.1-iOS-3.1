@@ -20,4 +20,4 @@ Install Xcode 4.1 (may work with 4.0 and 4.2–4.4.1, but not tested). Set the s
 - iPhone 5 (ARMv7s) (There are no black frames on the sides of the game)
 
 # Credits
-@yefengeeeeeeeeeee <- fixed iPad xib files for Xcode 4.1 and fix crash the second time on iOS 3.1
+Thanks to [@yefengeeeeeeeeeee](https://github.com/yefengeeeeeeeeeee) for fixing the iPad xib files!
