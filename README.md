@@ -17,6 +17,7 @@ Install Xcode 4.1 (may work with 4.0 and 4.2–4.4.1, but not tested). Set the s
 - iPod Touch 1G (ARMv6)
 - iPod Touch 2G (ARMv6)
 - iPhone 2G (ARMv6)
+- iPhone 3GS (ARMv7)
 - iPhone 4S (ARMv7)
 - iPhone 5 (ARMv7s) (There are no black frames on the sides of the game)
 
