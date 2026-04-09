@@ -16,7 +16,7 @@ typedef std::map<GLuint, GLsizei> IntGLMap;
 
 class Tesselator
 {
-    static const int MAX_MEMORY_USE = 16 * 1024 * 1024;
+    static const int MAX_MEMORY_USE = 4 * 1024 * 1024;
     static const int MAX_FLOATS = MAX_MEMORY_USE / 4 / 2;
 
 	Tesselator(int size);

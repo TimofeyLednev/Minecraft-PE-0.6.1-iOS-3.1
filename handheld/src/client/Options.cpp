@@ -30,7 +30,7 @@ void Options::initDefaultValues() {
 	sound = 1;
 	sensitivity = 0.5f;
 	invertYMouse = false;
-	viewDistance = 2;
+	viewDistance = 1;
 	bobView = true;
 	anaglyph3d = false;
 	limitFramerate = false;
@@ -93,7 +93,7 @@ void Options::initDefaultValues() {
 //	it would be slightly better performance with it inlined. Should
 //  probably create separate subclasses (or read from file). @fix @todo.
 #if defined(ANDROID) || defined(__APPLE__) || defined(RPI)
-    viewDistance = 2;
+    viewDistance = 1;
     thirdPersonView = false;
 	useMouseForDigging = false;
 	fancyGraphics = false;
@@ -233,7 +233,7 @@ void Options::update()
 			bool isLow;
 			readBool(value, isLow);
 			if (isLow) {
-				viewDistance = 3;
+				viewDistance = 2;
 				fancyGraphics = false;
 			}
 		}
