@@ -20,6 +20,7 @@ Install Xcode 4.1 (may work with 4.0 and 4.2–4.4.1, but not tested). Set the s
 - iPhone 3GS (ARMv7)
 - iPhone 4S (ARMv7)
 - iPhone 5 (ARMv7s) (There are no black frames on the sides of the game)
+- iPad 1 (ARMv7) (Tested on iOS 3.2.2)
 
 # Online
 It also works online between the original version of Minecraft PE 0.6.1 and the modified one, as well as between two ARMv6 devices
