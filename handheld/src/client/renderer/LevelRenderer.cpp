@@ -620,7 +620,7 @@ bool LevelRenderer::updateDirtyChunks( Mob* player, bool force )
 
 		return dirtyChunks.size() == 0;
 	} else {
-		const int count = 3;
+		const int count = 1;
 
 		DirtyChunkSorter dirtyChunkSorter(player);
 		Chunk* toAdd[count] = {NULL};
