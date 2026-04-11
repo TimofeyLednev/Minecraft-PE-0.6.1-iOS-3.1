@@ -29,6 +29,6 @@ It also works online between the original version of Minecraft PE 0.6.1 and the 
 Thanks to [@yefengeeeeeeeeeee](https://github.com/yefengeeeeeeeeeee) for fixing the iPad xib files for Xcode 4.1!
 
 
-- tiktok video (for proof in comments)
+- tiktok video (for proof in comments @timofeilednev)
 
 https://www.tiktok.com/t/ZP8gMyTYB/
