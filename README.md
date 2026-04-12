@@ -20,7 +20,7 @@ Install Xcode 4.1 (may work with 4.0 and 4.2–4.4.1, but not tested). Set the s
 - iPhone 3GS (ARMv7)
 - iPhone 4S (ARMv7)
 - iPhone 5 (ARMv7s) (There are no black frames on the sides of the game)
-- iPhone 5S (arm64) (Tested on iOS 7.1
+- iPhone 5S (arm64) (Tested on iOS 7.1)
 - iPad 1 (ARMv7) (Tested on iOS 3.2.2)
 
 # Online
