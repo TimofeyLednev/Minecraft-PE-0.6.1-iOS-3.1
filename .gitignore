@@ -1,2 +1,8 @@
 .DS_Store
 **/.DS_Store
+/handheld/project/win32/Debug
+/handheld/project/win32/Release
+/handheld/project/win32/games
+/handheld/project/win32/MinecraftWin32
+/handheld/project/win32/options.txt
+/handheld/project/win32/.vs

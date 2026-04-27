@@ -65,6 +65,7 @@ public:
 private:
 	Button bJoin;
 	TButton bBack;
+	TButton bJoinByIp;
 	THeader bHeader;
 	AvailableGamesList* gamesList;
 };

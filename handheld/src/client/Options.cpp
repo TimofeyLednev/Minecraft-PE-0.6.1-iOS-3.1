@@ -46,6 +46,7 @@ void Options::initDefaultValues() {
 	//skin     = "Default";
 	username = "Steve";
 	serverVisible = true;
+	lastIp = "";
 
 	keyUp	 = KeyMapping("key.forward", Keyboard::KEY_W);
 	keyLeft  = KeyMapping("key.left", Keyboard::KEY_A);
@@ -196,6 +197,7 @@ void Options::update()
 		// Multiplayer
 		if (key == OptionStrings::Multiplayer_Username) username = value;
 		if (key == OptionStrings::Multiplayer_ServerVisible) readBool(value, serverVisible);
+		if (key == "multiplayer.lastIp") lastIp = value;
 
 		// Controls
         if (key == OptionStrings::Controls_Sensitivity) {
@@ -299,6 +301,7 @@ void Options::save()
 	// Account
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_Username, username);
 	addOptionToSaveOutput(stringVec, OptionStrings::Multiplayer_ServerVisible, serverVisible);
+	addOptionToSaveOutput(stringVec, "multiplayer.lastIp", lastIp);
 
 	// Game
 	addOptionToSaveOutput(stringVec, OptionStrings::Game_DifficultyLevel, difficulty);

@@ -19,11 +19,14 @@ Screen::Screen()
 {
 }
 
-void Screen::render( int xm, int ym, float a )
+void Screen::render(int xm, int ym, float a)
 {
 	for (unsigned int i = 0; i < buttons.size(); i++) {
 		Button* button = buttons[i];
 		button->render(minecraft, xm, ym);
+	}
+	for (unsigned int i = 0; i < textBoxes.size(); i++) {
+		textBoxes[i]->render(minecraft, xm, ym);
 	}
 }
 
@@ -153,6 +156,11 @@ bool Screen::closeOnPlayerHurt() {
 
 void Screen::keyPressed( int eventKey )
 {
+
+	for (unsigned int i = 0; i < textBoxes.size(); i++) {
+		textBoxes[i]->handleKey(eventKey);
+	}
+
 	if (eventKey == Keyboard::KEY_ESCAPE) {
 		minecraft->setScreen(NULL);
 		//minecraft->grabMouse();
@@ -192,6 +200,11 @@ void Screen::updateTabButtonSelection()
 
 void Screen::mouseClicked( int x, int y, int buttonNum )
 {
+
+	for (unsigned int i = 0; i < textBoxes.size(); i++) {
+		textBoxes[i]->mouseClicked(minecraft, x, y, buttonNum);
+	}
+
 	if (buttonNum == MouseAction::ACTION_LEFT) {
 		for (unsigned int i = 0; i < buttons.size(); ++i) {
 			Button* button = buttons[i];
@@ -252,4 +265,18 @@ void Screen::lostFocus() {
 void Screen::toGUICoordinate( int& x, int& y ) {
 	x = x * width / minecraft->width;
 	y = y * height / minecraft->height - 1;
+}
+
+void Screen::tick()
+{
+	for (unsigned int i = 0; i < textBoxes.size(); i++) {
+		textBoxes[i]->tick(minecraft);
+	}
+}
+
+void Screen::keyboardNewChar(char inputChar)
+{
+	for (unsigned int i = 0; i < textBoxes.size(); i++) {
+		textBoxes[i]->handleChar(inputChar);
+	}
 }

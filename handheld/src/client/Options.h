@@ -158,6 +158,7 @@ public:
 	std::string username;
 
 	bool serverVisible;
+	std::string lastIp;
 	bool isJoyTouchArea;
 	bool useTouchScreen;
 	float pixelsPerMillimeter;

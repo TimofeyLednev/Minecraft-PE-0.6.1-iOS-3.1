@@ -14,20 +14,20 @@ class Minecraft;
 class PolygonArea;
 
 // @todo: extract a separate MoveInput (-> merge XperiaPlayInput)
-class TouchscreenInput_TestFps:	public IMoveInput,
-								public GuiComponent
+class TouchscreenInput_TestFps : public IMoveInput,
+	public GuiComponent
 {
 public:
-    static const int KEY_UP = 0;
-    static const int KEY_DOWN = 1;
-    static const int KEY_LEFT = 2;
-    static const int KEY_RIGHT = 3;
-    static const int KEY_JUMP = 4;
-    static const int KEY_SNEAK = 5;
+	static const int KEY_UP = 0;
+	static const int KEY_DOWN = 1;
+	static const int KEY_LEFT = 2;
+	static const int KEY_RIGHT = 3;
+	static const int KEY_JUMP = 4;
+	static const int KEY_SNEAK = 5;
 	static const int KEY_CRAFT = 6;
 	static const int NumKeys = 7;
 
-    TouchscreenInput_TestFps(Minecraft* mc, Options* options);
+	TouchscreenInput_TestFps(Minecraft* mc, Options* options);
 	~TouchscreenInput_TestFps();
 
 	void onConfigChanged(const Config& c);
@@ -36,10 +36,10 @@ public:
 	void render(float a);
 
 	void setKey(int key, bool state);
-    void releaseAllKeys();
+	void releaseAllKeys();
 
 	const RectangleArea& getRectangleArea();
-    const RectangleArea& getPauseRectangleArea();
+	const RectangleArea& getPauseRectangleArea();
 
 private:
 	void clear();
@@ -61,6 +61,7 @@ private:
 	RectangleArea* aUp;
 	RectangleArea* aDown;
 	RectangleArea* aPause;
+	RectangleArea* aChat;
 	//RectangleArea* aUpJump;
 	RectangleArea* aJump;
 	RectangleArea* aUpLeft;

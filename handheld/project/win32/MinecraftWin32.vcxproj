@@ -47,11 +47,13 @@
     <ClCompile Include="..\..\src\client\gui\screens\ChestScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\ChooseLevelScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\ConfirmScreen.cpp" />
+    <ClCompile Include="..\..\src\client\gui\screens\ConsoleScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\crafting\CraftingFilters.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\crafting\PaneCraftingScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\crafting\StonecutterScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\crafting\WorkbenchScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\DeathScreen.cpp" />
+    <ClCompile Include="..\..\src\client\gui\screens\JoinByIPScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\SimpleChooseLevelScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\FurnaceScreen.cpp" />
     <ClCompile Include="..\..\src\client\gui\screens\InBedScreen.cpp" />
@@ -392,11 +394,13 @@
     <ClInclude Include="..\..\src\client\gui\screens\ChestScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\ChooseLevelScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\ConfirmScreen.h" />
+    <ClInclude Include="..\..\src\client\gui\screens\ConsoleScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\crafting\CraftingFilters.h" />
     <ClInclude Include="..\..\src\client\gui\screens\crafting\PaneCraftingScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\crafting\StonecutterScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\crafting\WorkbenchScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\DeathScreen.h" />
+    <ClInclude Include="..\..\src\client\gui\screens\JoinByIPScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\SimpleChooseLevelScreen.h" />
     <ClInclude Include="..\..\src\client\gui\screens\DialogDefinitions.h" />
     <ClInclude Include="..\..\src\client\gui\screens\DisconnectionScreen.h" />

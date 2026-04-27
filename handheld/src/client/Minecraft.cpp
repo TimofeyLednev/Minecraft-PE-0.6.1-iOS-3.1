@@ -30,6 +30,7 @@
 #include "gui/Screen.h"
 #include "gui/Font.h"
 #include "gui/screens/RenameMPLevelScreen.h"
+#include "gui/screens/ConsoleScreen.h"
 #include "sound/SoundEngine.h"
 #endif
 #include "../platform/CThread.h"
@@ -729,13 +730,8 @@ void Minecraft::tickInput() {
 					player->noPhysics = options.isFlying;
 				}
 
-				if (key == Keyboard::KEY_T) {
-					options.thirdPersonView = !options.thirdPersonView;
-					/*
-					ImprovedNoise noise;
-					for (int i = 0; i < 16; ++i)
-						printf("%d\t%f\n", i, noise.grad2(i, 3, 8));
-					*/
+				if (!screen && key == Keyboard::KEY_T && level) {
+					setScreen(new ConsoleScreen());
 				}
 
 				if (key == Keyboard::KEY_O) {
@@ -1294,6 +1290,30 @@ bool Minecraft::joinMultiplayer( const PingedCompatibleServer& server )
 	}
 	return false;
 }
+
+bool Minecraft::joinMultiplayerFromString( const std::string& server )
+{	
+	std::string ip = "";
+	std::string port = "19132";
+	
+	size_t pos = server.find(":");
+
+	if (pos != std::string::npos) {
+		ip = server.substr(0, pos);
+		port = server.substr(pos + 1);
+	} else {
+		ip = server;
+	}
+
+	printf("%s \n", port.c_str());
+	
+	if (isLookingForMultiplayer && netCallback) {
+		isLookingForMultiplayer = false;
+		return raknetInstance->connect(ip.c_str(), atoi(port.c_str()));
+	}
+	return false;
+}
+
 
 void Minecraft::hostMultiplayer(int port) {
     // Tear down last instance

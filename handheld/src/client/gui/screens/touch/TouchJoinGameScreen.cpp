@@ -64,6 +64,7 @@ void AvailableGamesList::renderItem( int i, int x, int y, int h, Tesselator& t )
 JoinGameScreen::JoinGameScreen()
 :	bJoin(  2, "Join Game"),
 	bBack(  3, "Back"),
+	bJoinByIp(4, "Join By IP"),
 	bHeader(0, ""),
 	gamesList(NULL)
 {
@@ -80,6 +81,7 @@ void JoinGameScreen::init()
 {
 	//buttons.push_back(&bJoin);
 	buttons.push_back(&bBack);
+	buttons.push_back(&bJoinByIp);
 	buttons.push_back(&bHeader);
 
 	minecraft->raknetInstance->clearServerList();
@@ -97,14 +99,16 @@ void JoinGameScreen::setupPositions() {
 	//#ifdef ANDROID
 	bJoin.y =	0;
 	bBack.y =   0;
+	bJoinByIp.y = 0;
 	bHeader.y = 0;
 	//#endif
 
 	// Center buttons
 	//bJoin.x = width / 2 - 4 - bJoin.w;
 	bBack.x = 0;//width / 2 + 4;
-	bHeader.x = bBack.width;
-	bHeader.width = width - bHeader.x;
+	bJoinByIp.x = width - bJoinByIp.width;;
+	bHeader.x = bJoinByIp.width;
+	bHeader.width = width - (bBack.width + bJoinByIp.width);
 }
 
 void JoinGameScreen::buttonClicked(Button* button)
@@ -124,6 +128,11 @@ void JoinGameScreen::buttonClicked(Button* button)
 		//minecraft->locateMultiplayer();
 		//minecraft->setScreen(new JoinGameScreen());
 	}
+	if (button->id == bJoinByIp.id) {
+		minecraft->cancelLocateMultiplayer();
+		minecraft->screenChooser.setScreen(SCREEN_JOINBYIP);
+	}
+
 	if (button->id == bBack.id)
 	{
 		minecraft->cancelLocateMultiplayer();

@@ -31,7 +31,7 @@ public:
 	virtual void keyboardTextEvent();
 	virtual bool handleBackEvent(bool isDown);
 
-    virtual void tick() {}
+	virtual void tick();
 
     virtual void removed() {}
 
@@ -58,7 +58,7 @@ protected:
 	virtual void mouseReleased(int x, int y, int buttonNum);
 
 	virtual void keyPressed(int eventKey);
-	virtual void keyboardNewChar(char inputChar) {}
+	virtual void keyboardNewChar(char inputChar);
 public:
 	int width;
 	int height;

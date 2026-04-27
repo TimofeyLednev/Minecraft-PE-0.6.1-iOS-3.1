@@ -134,6 +134,11 @@ void ServerSideNetworkHandler::displayGameMessage(const std::string& message)
 	raknetInstance->send(packet);
 }
 
+void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& source, ChatPacket* packet)
+{
+	displayGameMessage(packet->message);
+}
+
 void ServerSideNetworkHandler::onNewClient(const RakNet::RakNetGUID& clientGuid)
 {
 	LOGI("onNewClient, client guid: %s\n", clientGuid.ToString());
