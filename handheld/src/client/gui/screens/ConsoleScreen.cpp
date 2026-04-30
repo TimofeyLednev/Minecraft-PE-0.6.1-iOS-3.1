@@ -70,9 +70,14 @@ void ConsoleScreen::execute()
     }
 
     if (_input[0] == '/') {
-        std::string result = processCommand(_input);
-        if (!result.empty())
-            minecraft->gui.addMessage(result);
+        if (minecraft->netCallback && !minecraft->raknetInstance->isServer()) {
+            ChatPacket pkt(_input);
+            minecraft->raknetInstance->send(pkt);
+        } else {
+            std::string result = processCommand(_input);
+            if (!result.empty())
+                minecraft->gui.addMessage(result);
+        }
     } else {
         std::string msg = std::string("<") + minecraft->player->name + "> " + _input;
         if (minecraft->netCallback && minecraft->raknetInstance->isServer()) {
