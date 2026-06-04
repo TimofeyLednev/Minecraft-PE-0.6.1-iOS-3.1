@@ -6,3 +6,6 @@
 /handheld/project/win32/MinecraftWin32
 /handheld/project/win32/options.txt
 /handheld/project/win32/.vs
+
+# iOS cross-compile outputs
+/build/
