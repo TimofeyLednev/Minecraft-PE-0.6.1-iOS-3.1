@@ -1,0 +1,53 @@
+name: Build iOS (armv6 / iOS 3.x)
+
+# Cross-compiles Minecraft PE 0.6.1 for armv6 on Ubuntu, against the iOS 4.3 SDK,
+# and uploads the resulting .ipa as a build artifact. No macOS runner needed.
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: [ "**/*.md", "docs/**" ]
+  pull_request:
+    paths-ignore: [ "**/*.md", "docs/**" ]
+  workflow_dispatch:
+    inputs:
+      config:
+        description: "Build configuration"
+        default: "Release"
+        type: choice
+        options: [ Release, Debug, Ad-Hoc, AppStore ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            clang llvm llvm-dev libclang-dev \
+            build-essential git wget zip \
+            libplist-dev libssl-dev pkg-config
+          # cctools-port + ldid expect unsuffixed tool names.
+          sudo ln -sf "$(command -v llvm-config || command -v llvm-config-14)" /usr/local/bin/llvm-config || true
+
+      - name: Cache iOS 4.3 SDK + toolchain
+        uses: actions/cache@v4
+        with:
+          path: build/work
+          key: ios-build-work-${{ runner.os }}-v1
+
+      - name: Build .ipa
+        run: |
+          chmod +x build-ios.sh
+          ./build-ios.sh --config "${{ github.event.inputs.config || 'Release' }}"
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: minecraftpe-armv6-ipa
+          path: build/*.ipa
+          if-no-files-found: error
