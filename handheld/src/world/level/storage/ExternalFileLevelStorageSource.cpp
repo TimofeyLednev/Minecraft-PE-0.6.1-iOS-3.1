@@ -66,7 +66,33 @@ void ExternalFileLevelStorageSource::addLevelSummaryIfExists(LevelSummaryList& d
 
 void ExternalFileLevelStorageSource::getLevelList(LevelSummaryList& dest)
 {
-#ifdef WIN32
+#ifdef WINMOBILE
+
+	// Tested before WIN32 because CeGCC predefines WIN32, and the branch below
+	// does not link: Windows CE has no ANSI Win32 API at all.  winbase.h still
+	// *declares* FindFirstFileA/FindNextFileA -- it is the generic mingw header
+	// -- but coredll exports only the W entry points, so the ANSI names fail at
+	// link time rather than compile time.  Hence the duplicated loop instead of
+	// a couple of #ifdefs inside the existing one.
+	//
+	// wce_fixPath is needed as well: basePath is built up with '/' separators
+	// and may be relative, and CE accepts neither.
+
+	WIN32_FIND_DATAW fileData;
+
+	std::wstring searchString = wce_widen(wce_fixPath((basePath + "/*").c_str()).c_str());
+
+	HANDLE hFind = FindFirstFileW(searchString.c_str(), &fileData);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			if (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				addLevelSummaryIfExists(dest, wce_narrow(fileData.cFileName).c_str());
+
+		} while (FindNextFileW(hFind, &fileData));
+		FindClose(hFind);
+	}
+
+#elif defined(WIN32)
 
 	WIN32_FIND_DATAA fileData;
 	HANDLE hFind;
@@ -82,7 +108,7 @@ void ExternalFileLevelStorageSource::getLevelList(LevelSummaryList& dest)
 
 		} while (FindNextFileA(hFind, &fileData));
 		FindClose(hFind);
-	} 
+	}
 
 
 #else

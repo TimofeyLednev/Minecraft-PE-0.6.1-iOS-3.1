@@ -112,7 +112,10 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance((Tile*)Tile::leaves, 1, 2));
 		addItem(new ItemInstance(Tile::stoneSlabHalf));
 	} else {
-#if defined(WIN32)
+// WINMOBILE is excluded so the phone build starts survival worlds empty, the way
+// iOS and Android do.  CeGCC predefines WIN32, which would otherwise hand the
+// player free tools -- a desktop debugging convenience, not intended gameplay.
+#if defined(WIN32) && !defined(WINMOBILE)
 		// Survival
 		addItem(new ItemInstance((Item*)Item::shears));
 		addItem(new ItemInstance(Tile::redBrick));
@@ -253,7 +256,7 @@ void Inventory::setupDefault() {
 		addItem(new ItemInstance(Item::bow));
 		addItem(new ItemInstance(Item::sign));
 	} else {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WINMOBILE)	// see the note on the other survival block above
 		// Survival
 		addItem(new ItemInstance(Item::ironIngot, 64));
 		addItem(new ItemInstance(Item::ironIngot, 34));

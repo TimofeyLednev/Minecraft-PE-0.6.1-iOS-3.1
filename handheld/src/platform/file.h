@@ -3,7 +3,30 @@
 
 bool DeleteDirectory(const std::string&, bool noRecycleBin = true);
 
-#ifdef WIN32
+#ifdef WINMOBILE
+	// Tested before WIN32 because CeGCC predefines WIN32, and the branch below
+	// does not survive the platform: shell32 does not exist on Windows CE, so
+	// SHFileOperation/SHFILEOPSTRUCT are absent from the SDK and would not link
+	// even if they were declared.  wce_deleteTree walks the tree with
+	// FindFirstFileW/RemoveDirectoryW instead.
+	//
+	// There is no recycle bin on CE either, so noRecycleBin has nothing to
+	// select: the delete is always permanent, which is what every caller in the
+	// game asks for.
+	//
+	// <windows.h> is included even though nothing here needs it, to keep the
+	// same transitive-include contract as the WIN32 branch below: callers such
+	// as ExternalFileLevelStorageSource.cpp get their Win32 declarations through
+	// this header and nowhere else.
+	#include "wince_compat.h"
+	#include <windows.h>
+	#include <string>
+
+bool DeleteDirectory(const std::string& dir, bool /*noRecycleBin*/)
+{
+	return wce_deleteTree(dir.c_str());
+}
+#elif defined(WIN32)
     #include <windows.h>
     #include <tchar.h>
     #include <shellapi.h>

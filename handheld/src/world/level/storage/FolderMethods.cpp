@@ -22,6 +22,7 @@ int _errno() {
 #else
 	#include <io.h>
 	#include <direct.h>
+	#include <errno.h>
 	#include <windows.h>
 #endif
 
@@ -35,7 +36,11 @@ bool createFolderIfNotExists( const char* name ) {
 
     int errorCode = 0;
 	if ((errorCode = _mkdir(name)) != 0) {
-        LOGI("FAILED to create folder %s, %d! Escape plan?\n", name, _errno());
+		// errno, not _errno(): on every Windows target _errno() returns int*, so
+		// the old form fed a pointer to %d.  errno is the int on all three
+		// platforms -- the POSIX _errno() wrapper above stays only because
+		// ExternalFileLevelStorageSource still calls it.
+        LOGI("FAILED to create folder %s, %d! Escape plan?\n", name, errno);
         return false;
     }
 

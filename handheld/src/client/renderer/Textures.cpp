@@ -137,7 +137,50 @@ TextureId Textures::assignTexture( const std::string& resourceName, const Textur
 
     //LOGI("Adding id: %d to map\n", id);
 	idMap.insert(std::make_pair(resourceName, id));
+
+#ifdef WINMOBILE
+	/* The pixels are in GL's hands now, so drop our copy.
+	 *
+	 * assignTexture otherwise keeps every decoded image in loadedImages for the
+	 * lifetime of the process, and on this build that is ~3.6 MB of RGBA out of
+	 * a 32 MB address space -- more than a tenth of the budget, held for nothing.
+	 * Six of the seven callers of getTemporaryTextureData (NinePatch,
+	 * ImageButton, LargeImageButton, StartMenuScreen, TouchStartMenuScreen) read
+	 * only ->w and ->h, to work out UVs and layout, so for those the record has to
+	 * stay -- just not the buffer.
+	 *
+	 * The seventh is Font::init, which measures glyph widths by scanning the font
+	 * sheet's alpha channel, and does it again on every onGraphicsReset.  Freeing
+	 * that one buffer is a null dereference during startup, which is exactly what
+	 * the first build of this optimisation did.
+	 *
+	 * It is matched by name here rather than by an argument on the call because
+	 * loadTexture returns the cached id for a name it has already seen: whoever
+	 * asks first is the one whose preference would count, and for the font sheet
+	 * that is either Font::init or Gui::renderToolBar's loadAndBindTexture
+	 * depending on when a graphics reset lands.  The decision belongs to the
+	 * resource, not to the call site.  The sheet is 128x128, so 64 KB of the
+	 * 3.6 MB stays behind.
+	 *
+	 * memoryHandledExternally is respected: on iOS the data can be a mapped
+	 * PVRTC blob this class does not own.  ~Textures/clear() then find data ==
+	 * NULL and delete[] nothing, which is why no bookkeeping changes here.
+	 *
+	 * Guarded rather than unconditional only because the other ports cannot be
+	 * tested from here; the reasoning applies to all of them.
+	 */
+	const bool pixelsReadBackLater = (resourceName.compare(0, 5, "font/") == 0);
+
+	TextureData shrunk = img;
+	if (!pixelsReadBackLater && !shrunk.memoryHandledExternally) {
+		delete[] shrunk.data;
+		shrunk.data     = NULL;
+		shrunk.numBytes = 0;
+	}
+	loadedImages.insert(std::make_pair(id, shrunk));
+#else
 	loadedImages.insert(std::make_pair(id, img));
+#endif
 
 	return id;
 }

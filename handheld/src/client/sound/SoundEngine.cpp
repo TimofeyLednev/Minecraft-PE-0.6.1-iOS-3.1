@@ -30,7 +30,10 @@ void SoundEngine::init( Minecraft* mc, Options* options )
 		loadLibrary();
 	}
 
-#if !defined(PRE_ANDROID23) && !defined(__APPLE__) && !defined(RPI)
+// WINMOBILE: see the comment on the matching guard in Sound.cpp.  Without the
+// embedded bank there is nothing to register, so every sounds.get() below misses
+// and playAt() is never reached.
+#if !defined(PRE_ANDROID23) && !defined(__APPLE__) && !defined(RPI) && !defined(WINMOBILE)
 	sounds.add("step.cloth", SA_cloth1);
 	sounds.add("step.cloth", SA_cloth2);
 	sounds.add("step.cloth", SA_cloth3);

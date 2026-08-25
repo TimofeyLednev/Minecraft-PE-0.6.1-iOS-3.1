@@ -334,7 +334,15 @@ void LevelChunk::clearUpdateMap()
 
 void LevelChunk::deleteBlockData()
 {
+#ifdef WINMOBILE
+	/* Allocated by whoever built the chunk -- RandomLevelSource::create,
+	   PerformanceTestChunkSource::create or ExternalFileLevelStorage::load --
+	   all of which use wce_bigAlloc so that 8 MB of block ids per level stays
+	   out of the 32 MB slot. */
+	wce_bigFree(blocks);
+#else
 	delete [] blocks;
+#endif
 	blocks = NULL;
 }
 

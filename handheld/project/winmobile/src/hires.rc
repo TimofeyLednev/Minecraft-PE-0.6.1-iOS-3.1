@@ -1,0 +1,63 @@
+/*
+ * HI_RES_AWARE -- opt out of Windows Mobile's DPI virtualisation.
+ *
+ * Windows Mobile 2003 SE through 6.5 assume an executable without this resource
+ * was written for QVGA (240x320) and give it a virtual coordinate space at half
+ * scale on a VGA or WVGA panel, then scale its GDI output up by two on the way
+ * to the framebuffer.  On the HD2's 480x800 that means:
+ *
+ *   GetSystemMetrics(SM_CXSCREEN)  ->  240  (not 480)
+ *   GetSystemMetrics(SM_CYSCREEN)  ->  400  (not 800)
+ *   GetDeviceCaps(hdc, LOGPIXELSX) ->  96   (the lie; the panel is 192)
+ *
+ * GDI honours that scale.  EGL and GL do not: the window is created in virtual
+ * pixels, eglCreateWindowSurface hands back a surface of that many *physical*
+ * pixels, and the driver blits it 1:1 into the top-left corner of the panel.
+ * Meanwhile the touch panel digitises in physical pixels and WM_LBUTTONDOWN
+ * arrives already divided by two.  The game therefore drew into a quarter of the
+ * screen while taps landed at twice the distance from the origin that they
+ * looked -- the upper-left of the rendered image is reachable, the rest of the
+ * image is not, and the lower-right three quarters of the panel are live but
+ * blank.  That is issue 2 in the first on-device report, and this file is the
+ * fix; the scaling fallback in main_winmobile.h only exists in case a device
+ * ignores the resource.
+ *
+ * Format: resource ID 1, type 24, body a single 2-byte WORD with the value 1.
+ * Type 24 is RT_MANIFEST on desktop Windows; Windows CE's loader reads the same
+ * slot under the name CEUX and treats a non-zero WORD as "this application
+ * handles its own scaling".  The numeric 24 is spelled out rather than written
+ * as CEUX because binutils' windres has no such keyword -- it only knows the
+ * desktop RT_* names -- and this is the form eVC's rc.exe emits anyway.
+ *
+ * The consequence of claiming it is that nothing scales the UI for us any more.
+ * That is what we want here and it costs nothing: the game lays out every screen
+ * from Minecraft::width/height at runtime (Gui::setSize, Screen::init) and
+ * hardcodes no pixel geometry, so it simply gets 800x480 to work with instead of
+ * 400x240.  Font and GUI scale come from Options/Gui, not from the OS DPI.
+ *
+ * There is no accompanying STRINGTABLE, ICON or VERSIONINFO on purpose: this is
+ * the whole resource script, and every byte it adds to the image is these two.
+ *
+ * LANGUAGE 0, 0 -- LANG_NEUTRAL/SUBLANG_NEUTRAL -- rather than windres's default
+ * of 0x0409 (English, US).  The loader looks this resource up by name and type
+ * and does not care what language it is filed under *if* its FindResource falls
+ * back the way the desktop one does; if it instead insists on the UI language or
+ * neutral, a resource filed under en-US is invisible on a localised ROM, and the
+ * device this port is tested on runs a Russian build of WM 6.5.  Neutral is
+ * found in either case, so there is no reason to file it anywhere else.
+ *
+ * All of which is theory: the HD2 in front of this port ignores the resource
+ * however it is filed, and still reports 400x240 at 96 dpi.  The port therefore
+ * measures the panel at startup and sizes its window from that -- see the
+ * display-scaling block in main_winmobile.h.  This file stays because it is the
+ * documented mechanism, it costs two bytes, and on a device that honours it the
+ * measurement finds a factor of 1 and every part of that fallback becomes the
+ * identity.
+ */
+
+LANGUAGE 0, 0
+
+1 24 DISCARDABLE
+BEGIN
+	0x0001
+END

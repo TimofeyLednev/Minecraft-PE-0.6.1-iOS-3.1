@@ -383,7 +383,12 @@ LevelChunk* ExternalFileLevelStorage::load(Level* level, int x, int z)
 
 	chunkData->ResetReadPointer();
 
+#ifdef WINMOBILE
+	unsigned char* blockIds =
+		(unsigned char*)wce_bigAlloc((size_t)CHUNK_BLOCK_COUNT);
+#else
 	unsigned char* blockIds = new unsigned char[CHUNK_BLOCK_COUNT];
+#endif
 	chunkData->Read((char*)blockIds, CHUNK_BLOCK_COUNT);
 
 	LevelChunk* levelChunk = new LevelChunk(level, blockIds, x, z);

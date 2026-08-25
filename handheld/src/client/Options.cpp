@@ -435,7 +435,12 @@ std::string Options::getMessage( const Option* item )
 bool Options::readFloat(const std::string& string, float& value) {
 	if (string == "true" || string == "YES")  { value = 1; return true; }
 	if (string == "false" || string == "NO") { value = 0; return true; }
-#ifdef _WIN32
+// WINMOBILE takes the plain-sscanf path: _WIN32 is predefined by CeGCC, but
+// sscanf_s is an MSVC secure-CRT extension that no CeGCC library provides.  The
+// fallback is exact rather than approximate -- sscanf_s only differs from sscanf
+// for %s/%c, where it takes an extra buffer-size argument, and neither of the
+// two conversions here is one of those.
+#if defined(_WIN32) && !defined(WINMOBILE)
 	if (sscanf_s(string.c_str(), "%f", &value))
 		return true;
 #else
@@ -449,7 +454,7 @@ bool Options::readFloat(const std::string& string, float& value) {
 bool Options::readInt(const std::string& string, int& value) {
 	if (string == "true" || string == "YES")  { value = 1; return true; }
 	if (string == "false" || string == "NO") { value = 0; return true; }
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(WINMOBILE)	// see readFloat above
 	if (sscanf_s(string.c_str(), "%d", &value))
 		return true;
 #else

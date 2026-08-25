@@ -61,7 +61,10 @@ private:
 	mutable char* buffer;
 };
 
-#if !defined(PRE_ANDROID23) && !defined(__APPLE__) && !defined(RPI)
+// WINMOBILE: see the comment on the matching guard in Sound.cpp -- the 22 MB
+// embedded sound bank is not linked into the CE build, so there is nothing for
+// these to refer to.
+#if !defined(PRE_ANDROID23) && !defined(__APPLE__) && !defined(RPI) && !defined(WINMOBILE)
 
 extern SoundDesc SA_cloth1;
 extern SoundDesc SA_cloth2;

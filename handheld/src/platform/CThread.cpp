@@ -15,10 +15,28 @@
 	{
 	#ifdef WIN32
 		mp_threadFunc = (LPTHREAD_START_ROUTINE) threadFunc;
-		
+
+	#ifdef WINMOBILE
+		/* An explicit stack, unlike every other platform here, because on
+		 * Windows CE a thread's stack is *reserved inside the process's 32 MB
+		 * slot* -- the same slot the level's 21 MB of chunks has to fit in.
+		 * dwStackSize == 0 means "use the value in the module header", which is
+		 * 1 MB after the Makefile's -Wl,--stack, and this thread does not need
+		 * anything like that: it runs Minecraft::prepareLevel, whose deepest
+		 * frames are the level generator's at under 3 KB each and nowhere near
+		 * recursive enough to need 256 KB.  CE commits stack pages on demand, so
+		 * the number below costs address space and not memory.
+		 *
+		 * (CE honours dwStackSize from 5.0 onwards; on 4.x it was ignored and
+		 * the header value used, which is the harmless outcome anyway.) */
+		const DWORD stackSize = 256 * 1024;
+	#else
+		const DWORD stackSize = 0;
+	#endif
+
 		m_threadHandle = CreateThread(
 			NULL,				// pointer to security attributes
-			NULL,               // initial thread stack size
+			stackSize,          // initial thread stack size
 			mp_threadFunc,		// pointer to thread function
 			threadParam,        // argument for new thread
 			NULL,               // creation flags

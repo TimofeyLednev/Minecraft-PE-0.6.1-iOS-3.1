@@ -25,7 +25,27 @@
 		#define printf LOGI
 	#endif
 #else
-#ifdef PUBLISH
+#ifdef WINMOBILE
+	// A GUI process on Windows CE has no stdout. printf() still links and still
+	// succeeds -- it just writes nowhere -- so the generic branch below would
+	// silently discard every line, including the ones explaining a failed boot.
+	// wce_logPrintf writes to <exeDir>\minecraft.log and mirrors to the
+	// debugger. Included rather than declared so this works even in a TU built
+	// without the Makefile's -include wince_compat.h.
+	//
+	// Tested BEFORE PUBLISH, unlike every other platform here, and deliberately:
+	// `make release` passes -DPUBLISH, and with the usual ordering that turns
+	// LOGI/LOGW/LOGE into do{;}while(0) -- which on a device with no debugger,
+	// no stdout and no crash dialog leaves nothing at all to diagnose from. The
+	// file is the only channel this port has, so it stays on in release. It
+	// costs one fprintf+fflush per line and nothing on the frame path, since
+	// nothing in the render loop logs.
+	#include "wince_compat.h"
+	#define LOGV(...) (wce_logPrintf(__VA_ARGS__))
+	#define LOGI(...) (wce_logPrintf(__VA_ARGS__))
+	#define LOGW(...) (wce_logPrintf(__VA_ARGS__))
+	#define LOGE(...) (wce_logPrintf(__VA_ARGS__))
+#elif defined(PUBLISH)
     #define LOGV(fmt, ...) __LOG_PUBLISH(__VA_ARGS__)
     #define LOGI(fmt, ...) __LOG_PUBLISH(__VA_ARGS__)
     #define LOGW(fmt, ...) __LOG_PUBLISH(__VA_ARGS__)

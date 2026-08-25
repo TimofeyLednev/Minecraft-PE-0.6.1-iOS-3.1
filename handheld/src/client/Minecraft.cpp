@@ -250,6 +250,14 @@ Minecraft::~Minecraft()
 // Only called by server
 void Minecraft::selectLevel( const std::string& levelId, const std::string& levelName, const LevelSettings& settings )
 {
+	/* Checkpoints through world creation.  The path spans two threads, touches
+	   the filesystem, and allocates ~21 MB of chunk storage, so when it dies
+	   there is otherwise nothing to say which of the three it was doing. */
+	LOGI("selectLevel: id='%s' name='%s'\n", levelId.c_str(), levelName.c_str());
+#ifdef WINMOBILE
+	wce_logMemory("before selectLevel");
+#endif
+
 #if defined(CREATORMODE)
 	level = new CreatorLevel(
 #else
@@ -260,11 +268,15 @@ void Minecraft::selectLevel( const std::string& levelId, const std::string& leve
 		settings,
 		SharedConstants::GeneratorVersion);
 
+	LOGI("selectLevel: level object constructed\n");
+
 	// note: settings is useless beyond this point, since it's
 	//       either copied to LevelData (or LevelData read from file)
 	setLevel(level, "Generating level");
 	setIsCreativeMode(level->getLevelData()->getGameType() == GameType::Creative);
 	_running = true;
+
+	LOGI("selectLevel: done, generation running in the background\n");
 }
 
 void Minecraft::setLevel(Level* level, const std::string& message /* ="" */, LocalPlayer* forceInsertPlayer /* = NULL */) {
@@ -385,6 +397,16 @@ void Minecraft::prepareLevel(const std::string& title) {
 					;
 			L.stop();
         }
+#ifdef WINMOBILE
+		/* Once per column of chunks -- 16 lines for a whole world, cheap enough
+		   to leave in.  This loop is where the level's memory is actually
+		   committed: each LevelChunk is 32 KB of blocks plus three 16 KB nibble
+		   layers, so all 256 of them come to ~21 MB inside a 32 MB slot.  If
+		   generation dies for want of memory, the last of these lines says how
+		   far it got and how little was left. */
+		wce_logPrintf("levelgen: %d/%d chunks\n", pp, Max);
+		wce_logMemory("levelgen");
+#endif
     }
 	A.stop();
 	level->setUpdateLights(true);
@@ -407,11 +429,16 @@ void Minecraft::prepareLevel(const std::string& title) {
 	LOGI("status: 3\n");
 	progressStageStatusId = 3;
 	if (level->isNew()) {
+		LOGI("prepareLevel: new level -- setting spawn\n");
 		level->setInitialSpawn(); // @note: should obviously be called from Level itself
+		LOGI("prepareLevel: saving level data\n");
 		level->saveLevelData();
+		LOGI("prepareLevel: saving all chunks\n");
 		level->getChunkSource()->saveAll(false);
+		LOGI("prepareLevel: saving game\n");
 		level->saveGame();
 	} else {
+		LOGI("prepareLevel: existing level -- saving data and loading entities\n");
 		level->saveLevelData();
 		level->loadEntities();
 	}
@@ -430,6 +457,11 @@ void Minecraft::prepareLevel(const std::string& title) {
 	C.print(" - clear: ");
 	D.print(" - prepr: ");
 	progressStageStatusId = 0;
+
+	LOGI("prepareLevel: complete\n");
+#ifdef WINMOBILE
+	wce_logMemory("after levelgen");
+#endif
 }
 
 void Minecraft::update() {
@@ -1357,8 +1389,13 @@ void Minecraft::generateLevel( const std::string& message, Level* level )
 
 void Minecraft::_levelGenerated()
 {
+	/* Runs on the main thread once generation has finished, and does a second
+	   round of heavy work: the player, then the renderer's chunk meshes and
+	   buffers on top of the level that is already resident. */
+	LOGI("_levelGenerated: entering\n");
 #ifndef STANDALONE_SERVER
 	if (player == NULL) {
+		LOGI("_levelGenerated: creating player\n");
 		player = (LocalPlayer*) gameMode->createPlayer(level);
 		gameMode->initPlayer(player);
 	}
@@ -1367,13 +1404,18 @@ void Minecraft::_levelGenerated()
 		player->input = inputHolder->getMoveInput();
 	}
 
+	LOGI("_levelGenerated: building renderer chunks\n");
 	if (levelRenderer != NULL) levelRenderer->setLevel(level);
 	if (particleEngine != NULL) particleEngine->setLevel(level);
+#ifdef WINMOBILE
+	wce_logMemory("after renderer chunks");
+#endif
 
 	gameMode->adjustPlayer(player);
 	gui.onLevelGenerated();
 #endif
 
+	LOGI("_levelGenerated: validating spawn\n");
 	level->validateSpawn();
 	level->loadPlayer(player, true);
 	// if we are client side, we trust the server to have given us a correct position
@@ -1390,7 +1432,16 @@ void Minecraft::_levelGenerated()
 		netCallback->levelGenerated(level);
 	}
 
-#if defined(WIN32) || defined(RPI)
+#if (defined(WIN32) || defined(RPI)) && !defined(WINMOBILE)
+	/* Not on Windows Mobile.  This block is only reachable there at all because
+	   CeGCC predefines WIN32, and it is the last thing world creation does --
+	   which is where the first on-device build died.  What it starts is the
+	   remote-control API: a TCP listener on port 4711 plus a CameraEntity, i.e.
+	   a full Mob constructed against a level whose player does not exist yet, and
+	   on demand a restoreBuffer sized to a slice of the whole 256x256 world.
+	   None of it is reachable from a phone with no desktop attached, and all of
+	   it is spent out of a 32 MB address space.  Winsock is up (RakNet), so this
+	   would probably work -- it is simply not worth the memory or the socket. */
 	if (_commandServer) {
 		delete _commandServer;
 	}
@@ -1402,6 +1453,11 @@ void Minecraft::_levelGenerated()
 	// instead, since adding yourself always generates a entityAdded)
 	//EntityRenderDispatcher::getInstance()->onGraphicsReset();
 	_hasSignaledGeneratingLevelFinished = true;
+
+	LOGI("_levelGenerated: world is ready\n");
+#ifdef WINMOBILE
+	wce_logMemory("world ready");
+#endif
 }
 
 Player* Minecraft::respawnPlayer(int playerId) {

@@ -708,7 +708,12 @@ bool RakNetGUID::FromString(const char *source)
 
 
 
-#if   defined(WIN32)
+// WINMOBILE takes the second branch.  CeGCC predefines WIN32, but _strtoui64 is
+// an MSVC CRT name that no CeGCC library provides -- the comment at the top of
+// this file records the same problem being hit under Code::Blocks.  strtoull is
+// the C99 spelling, declared in CeGCC's <stdlib.h> and defined in libmingwex,
+// and is what every non-Windows port here already uses.
+#if   defined(WIN32) && !defined(WINMOBILE)
 	g=_strtoui64(source, NULL, 10);
 
 

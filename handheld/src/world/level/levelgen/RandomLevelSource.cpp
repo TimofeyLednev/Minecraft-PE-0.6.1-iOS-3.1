@@ -495,7 +495,13 @@ LevelChunk* RandomLevelSource::getChunk(int xOffs, int zOffs) {
 
     random.setSeed((long)(xOffs * 341872712l + zOffs * 132899541l)); //@fix
 
+#ifdef WINMOBILE
+	/* 32 KB, freed by LevelChunk::deleteBlockData -- see wince_bigalloc.cpp. */
+    unsigned char* blocks =
+		(unsigned char*)wce_bigAlloc((size_t)LevelChunk::ChunkBlockCount);
+#else
     unsigned char* blocks = new unsigned char[LevelChunk::ChunkBlockCount];
+#endif
     LevelChunk* levelChunk = new LevelChunk(level, blocks, xOffs, zOffs);
 	chunkMap.insert(std::make_pair(hashedPos, levelChunk));
 
@@ -686,7 +692,12 @@ Biome::MobList RandomLevelSource::getMobsAt(const MobCategory& mobCategory, int 
 
 LevelChunk* PerformanceTestChunkSource::create(int x, int z)
 {
+#ifdef WINMOBILE
+	unsigned char* blocks =
+		(unsigned char*)wce_bigAlloc((size_t)LevelChunk::ChunkBlockCount);
+#else
 	unsigned char* blocks = new unsigned char[LevelChunk::ChunkBlockCount];
+#endif
 	memset(blocks, 0, LevelChunk::ChunkBlockCount);
 
 	for (int y = 0; y < 65; y++)

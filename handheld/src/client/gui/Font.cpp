@@ -44,6 +44,15 @@ void Font::onGraphicsReset()
 
 void Font::init( Options* options )
 {
+	/* Defaults first, so that every failure path below still leaves a usable
+	   width table.  6 px, space 4 px, which is what most of the stock sheet
+	   measures out to; the alternative is charWidths[] full of stack garbage,
+	   which draw() would happily use. */
+	for (int i = 0; i < 256; i++) {
+		charWidths[i]  = (i == ' ') ? 4 : 6;
+		fcharWidths[i] = (float) charWidths[i];
+	}
+
 	TextureId fontTexture = _textures->loadTexture(fontName);
 	const TextureData* tex = _textures->getTemporaryTextureData(fontTexture);
 
@@ -52,7 +61,16 @@ void Font::init( Options* options )
 
 	unsigned char* rawPixels = tex->data;
 
-	const int numChars = _rows * _cols;
+	if (!rawPixels) {
+		/* The widths come from the sheet's alpha channel, so no pixels means no
+		   measuring -- keep the defaults and draw with slightly wrong kerning
+		   rather than dereference NULL.  Reachable if a port frees texture pixels
+		   after upload without excluding the font sheet; see the note in
+		   Textures::assignTexture, which is where WINMOBILE excludes it. */
+		LOGE("Font::init - no pixels for %s, keeping default character widths\n", fontName.c_str());
+	}
+
+	const int numChars = rawPixels ? _rows * _cols : 0;
 	for (int i = 0; i < numChars; i++) {
 		int xt = i % _cols;
 		int yt = i / _cols;

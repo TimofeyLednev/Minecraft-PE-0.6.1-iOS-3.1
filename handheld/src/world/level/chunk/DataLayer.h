@@ -15,7 +15,14 @@ public:
 
     DataLayer(int length) {
 		this->length = length >> 1;
+#ifdef WINMOBILE
+		/* Out of the 32 MB process slot: three of these per chunk at 16 KB
+		   each, 256 chunks in a level, so 12 MB that the slot cannot spare.
+		   See wince_bigalloc.cpp. */
+		data = (unsigned char*)wce_bigAlloc((size_t)this->length);
+#else
 		data = new unsigned char[this->length];
+#endif
 		setAll(0);
 		slotMax = this->length;
     }
@@ -26,7 +33,13 @@ public:
     }
 
 	~DataLayer() {
+#ifdef WINMOBILE
+		/* Correct for the two-argument constructor's adopted buffer too:
+		   wce_bigFree passes anything outside a mapped view to delete[]. */
+		wce_bigFree(data);
+#else
 		delete[] data;
+#endif
 	}
 
     int get(int x, int y, int z) {

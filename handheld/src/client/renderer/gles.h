@@ -5,7 +5,9 @@
 #include "../Options.h"
 
 // Android should always run OPENGL_ES
-#if defined(ANDROID) || defined(__APPLE__) || defined(RPI)
+// Windows Mobile likewise: the HD2 has OpenGL ES 1.1 in hardware and no
+// desktop GL at all, so this is not a choice on that platform.
+#if defined(ANDROID) || defined(__APPLE__) || defined(RPI) || defined(WINMOBILE)
     #define OPENGL_ES
 #endif
 

@@ -6,3 +6,7 @@
 /handheld/project/win32/MinecraftWin32
 /handheld/project/win32/options.txt
 /handheld/project/win32/.vs
+/handheld/project/winmobile/obj
+/handheld/project/winmobile/Minecraft.exe
+/handheld/project/winmobile/mc.map
+/handheld/project/winmobile/tools/__pycache__

@@ -1,6 +1,19 @@
 #include "Sound.h"
 
-#if !defined(PRE_ANDROID23) && !defined(__APPLE__) && !defined(RPI)
+// WINMOBILE is excluded because these .pcm headers are 22 MB of C array
+// initialisers.  That is not a size the target can absorb: the whole process
+// gets a 32 MB address space on Windows CE 5.2, and the .exe's read-only data is
+// mapped into it, so embedding the sound bank would leave nothing for the world.
+// (It also takes GCC 4.4 several minutes and well over a gigabyte of host RAM to
+// chew through, which is its own reason.)
+//
+// Sound.h's matching guard drops the extern declarations and SoundEngine.cpp's
+// drops the registrations, so nothing references what is not defined here.
+// SoundEngine still compiles and still calls soundSystem.playAt(); the lookup
+// just never finds a sound, and SoundSystem is a no-op regardless.  Restoring
+// audio later means deleting WINMOBILE from those three guards and streaming the
+// bank off storage rather than linking it in.
+#if !defined(PRE_ANDROID23) && !defined(__APPLE__) && !defined(RPI) && !defined(WINMOBILE)
 
 #include "data/cloth1.pcm"
 #include "data/cloth2.pcm"
