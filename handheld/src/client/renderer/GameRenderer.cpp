@@ -285,7 +285,7 @@ void GameRenderer::renderLevel(float a) {
 		}
         
 		TIMER_POP_PUSH("frustrum");
-		FrustumCuller frustum;
+		FrustumCuller frustum(lastProjMatrix, lastModelMatrix);
         frustum.prepare(xOff, yOff, zOff);
 
 		TIMER_POP_PUSH("culling");
