@@ -285,5 +285,5 @@ void AppPlatform_iOS::hideKeyboard() {
 bool AppPlatform_iOS::isPowerVR() {
 	const char* s = (const char*)glGetString(GL_RENDERER);
 	if (!s) return false;
-	return strstr(s, "SGX") != NULL;
+	return strstr(s, "SGX") != NULL || strstr(s, "MBX") != NULL;
 }

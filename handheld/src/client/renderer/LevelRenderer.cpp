@@ -300,13 +300,6 @@ int LevelRenderer::render( Mob* player, int layer, float alpha )
 	}
 
 	TIMER_PUSH("sortchunks");
-	for (int i = 0; i < 10; i++) {
-		chunkFixOffs = (chunkFixOffs + 1) % chunksLength;
-		Chunk* c = chunks[chunkFixOffs];
-		if (c->isDirty() && std::find(dirtyChunks.begin(), dirtyChunks.end(), c) == dirtyChunks.end()) {
-			dirtyChunks.push_back(c);
-		}
-	}
 
 	if (layer == 0) {
 		totalChunks = 0;
@@ -592,160 +585,67 @@ void LevelRenderer::tick()
 
 bool LevelRenderer::updateDirtyChunks( Mob* player, bool force )
 {
-	bool slow = false;
+	static const float MaxFrameTime = 1.0f / 120.0f;
+	DirtyChunkSorter dirtyChunkSorter(player);
 
-	if (slow) {
-		DirtyChunkSorter dirtySorter(player);
-		std::sort(dirtyChunks.begin(), dirtyChunks.end(), dirtySorter);
-		int s = dirtyChunks.size() - 1;
-		int amount = dirtyChunks.size();
-		for (int i = 0; i < amount; i++) {
-			Chunk* chunk = dirtyChunks[s-i];
-			if (!force) {
-				if (chunk->distanceToSqr(player) > 16 * 16) {
-					if (chunk->visible) {
-						if (i >= MAX_VISIBLE_REBUILDS_PER_FRAME) return false;
-					} else {
-						if (i >= MAX_INVISIBLE_REBUILDS_PER_FRAME) return false;
-					}
-				}
-			} else {
-				if (!chunk->visible) continue;
-			}
-			chunk->rebuild();
+	_nearDirtyChunks.clear();
+	_dirtyPendingScratch.clear();
+	_nearDirtyChunks.reserve(dirtyChunks.size());
+	_dirtyPendingScratch.reserve(dirtyChunks.size());
 
-			dirtyChunks.erase( std::find(dirtyChunks.begin(), dirtyChunks.end(), chunk) ); // @q: s-i?
-			chunk->setClean();
+	Chunk* farChunk = NULL;
+	const int pendingChunkSize = dirtyChunks.size();
+
+	for (int i = 0; i < pendingChunkSize; i++) {
+		Chunk* chunk = dirtyChunks[i];
+
+		if (force) {
+			if (chunk->visible)
+				_nearDirtyChunks.push_back(chunk);
+			else
+				_dirtyPendingScratch.push_back(chunk);
+		} else if (chunk->distanceToSqr(player) <= 1024.0f) {
+			_nearDirtyChunks.push_back(chunk);
+		} else if (farChunk == NULL || !dirtyChunkSorter(chunk, farChunk)) {
+			if (farChunk != NULL)
+				_dirtyPendingScratch.push_back(farChunk);
+			farChunk = chunk;
+		} else {
+			_dirtyPendingScratch.push_back(chunk);
 		}
-
-		return dirtyChunks.size() == 0;
-	} else {
-		const int count = 1;
-
-		DirtyChunkSorter dirtyChunkSorter(player);
-		Chunk* toAdd[count] = {NULL};
-		std::vector<Chunk*>* nearChunks = NULL;
-
-		int pendingChunkSize = dirtyChunks.size();
-		int pendingChunkRemoved = 0;
-
-		for (int i = 0; i < pendingChunkSize; i++) {
-			Chunk* chunk = dirtyChunks[i];
-
-			if (!force) {
-				if (chunk->distanceToSqr(player) > 1024.0f) {
-					int index;
-
-					// is this chunk in the closest <count>?
-					for (index = 0; index < count; index++) {
-						if (toAdd[index] != NULL && dirtyChunkSorter(toAdd[index], chunk) == false) {
-							break;
-						}
-					}
-
-					index--;
-
-					if (index > 0) {
-						int x = index;
-						while (--x != 0) {
-							toAdd[x - 1] = toAdd[x];
-						}
-						toAdd[index] = chunk;
-					}
-
-					continue;
-				}
-			} else if (!chunk->visible) {
-				continue;
-			}
-
-			// chunk is very close -- always render
-
-			if (nearChunks == NULL) {
-				nearChunks = new std::vector<Chunk*>();
-			}
-
-			pendingChunkRemoved++;
-			nearChunks->push_back(chunk);
-			dirtyChunks[i] = NULL;
-		}
-
-		// if there are nearby chunks that need to be prepared for
-		// rendering, sort them and then process them
-		static const float MaxFrameTime = 1.0f / 100.0f;
-		Stopwatch chunkWatch;
-		chunkWatch.start();
-
-		if (nearChunks != NULL) {
-			if (nearChunks->size() > 1) {
-				std::sort(nearChunks->begin(), nearChunks->end(), dirtyChunkSorter);
-			}
-
-			for (int i = nearChunks->size() - 1; i >= 0; i--) {
-				Chunk* chunk = (*nearChunks)[i];
-				chunk->rebuild();
-				chunk->setClean();
-			}
-			delete nearChunks;
-		}
-
-		// render the nearest <count> chunks (farther than 1024 units away)
-		int secondaryRemoved = 0;
-
-		for (int i = count - 1; i >= 0; i--) {
-			Chunk* chunk = toAdd[i];
-			if (chunk != NULL) {
-
-				float ttt = chunkWatch.stopContinue();
-				if (ttt >= MaxFrameTime) {
-					//LOGI("Too much work, I quit2!\n");
-					break;
-				}
-
-				if (!chunk->visible && i != count - 1) {
-					// escape early if chunks aren't ready
-					toAdd[i] = NULL;
-					toAdd[0] = NULL;
-					break;
-				}
-				toAdd[i]->rebuild();
-				toAdd[i]->setClean();
-				secondaryRemoved++;
-			}
-		}
-
-		// compact by removing nulls
-		int cursor = 0;
-		int target = 0;
-		int arraySize = dirtyChunks.size();
-		while (cursor != arraySize) {
-			Chunk* chunk = dirtyChunks[cursor];
-			if (chunk != NULL) {
-				bool remove = false;
-                for (int i = 0; i < count && !remove; i++)
-                    if (chunk == toAdd[i]) {
-                        remove = true;
-                    }
-
-                if (!remove) {
-				//if (chunk == toAdd[0] || chunk == toAdd[1] || chunk == toAdd[2]) {
-				//	; // this chunk was rendered and should be removed
-				//} else {
-					if (target != cursor) {
-						dirtyChunks[target] = chunk;
-					}
-					target++;
-				}
-			}
-			cursor++;
-		}
-
-		// trim
-		if (cursor > target)
-			dirtyChunks.erase(dirtyChunks.begin() + target, dirtyChunks.end());
-
-		return pendingChunkSize == (pendingChunkRemoved + secondaryRemoved);
 	}
+
+	if (_nearDirtyChunks.size() > 1)
+		std::sort(_nearDirtyChunks.begin(), _nearDirtyChunks.end(), dirtyChunkSorter);
+
+	Stopwatch chunkWatch;
+	chunkWatch.start();
+
+	int rebuilt = 0;
+	for (int i = _nearDirtyChunks.size() - 1; i >= 0; i--) {
+		if (!force && rebuilt > 0 && chunkWatch.stopContinue() >= MaxFrameTime) {
+			for (int j = i; j >= 0; j--)
+				_dirtyPendingScratch.push_back(_nearDirtyChunks[j]);
+			break;
+		}
+
+		Chunk* chunk = _nearDirtyChunks[i];
+		chunk->rebuild();
+		chunk->setClean();
+		++rebuilt;
+	}
+
+	if (farChunk != NULL) {
+		if (force || rebuilt == 0 || chunkWatch.stopContinue() < MaxFrameTime) {
+			farChunk->rebuild();
+			farChunk->setClean();
+		} else {
+			_dirtyPendingScratch.push_back(farChunk);
+		}
+	}
+
+	dirtyChunks.swap(_dirtyPendingScratch);
+	return dirtyChunks.empty();
 }
 
 void LevelRenderer::renderHit( Player* player, const HitResult& h, int mode, /*ItemInstance*/void* inventoryItem, float a )
@@ -884,9 +784,7 @@ void LevelRenderer::cull( Culler* culler, float a )
 {
 	for (int i = 0; i < chunksLength; i++) {
 		if (!chunks[i]->isEmpty()) {
-			if (!chunks[i]->visible || ((i + cullStep) & 15) == 0) {
-				chunks[i]->cull(culler);
-			}
+			chunks[i]->cull(culler);
 		}
 	}
 	cullStep++;
@@ -934,7 +832,7 @@ void LevelRenderer::renderEntities(Vec3 cam, Culler* culler, float a) {
 	const EntityList& entities = level->getAllEntities();
 	totalEntities = entities.size();
 	if (totalEntities > 0) {
-		Entity** toRender = new Entity*[totalEntities];
+		_renderEntities.clear();
 		for (int i = 0; i < totalEntities; i++) {
 			Entity* entity = entities[i];
 
@@ -946,20 +844,19 @@ void LevelRenderer::renderEntities(Vec3 cam, Culler* culler, float a) {
 				if (!level->hasChunkAt(Mth::floor(entity->x), Mth::floor(entity->y), Mth::floor(entity->z)))
 					continue;
 
-				toRender[renderedEntities++] = entity;
+				_renderEntities.push_back(entity);
 				//EntityRenderDispatcher::getInstance()->render(entity, a);
 			}
 		}
+		renderedEntities = _renderEntities.size();
 
 		if (renderedEntities > 0) {
-			std::sort(&toRender[0], &toRender[renderedEntities], entityRenderPredicate);
+			std::sort(_renderEntities.begin(), _renderEntities.end(), entityRenderPredicate);
 			for (int i = 0; i < renderedEntities; ++i) {
 				EntityRenderDispatcher* disp = EntityRenderDispatcher::getInstance();
-				disp->render(toRender[i], a);
+				disp->render(_renderEntities[i], a);
 			}
 		}
-
-		delete[] toRender;
 	}
 
     TIMER_POP_PUSH("tileentities");

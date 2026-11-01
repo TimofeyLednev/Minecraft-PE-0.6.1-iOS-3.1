@@ -189,10 +189,8 @@ void ModelPart::compile( float scale )
 	Tesselator& t = Tesselator::instance;
 	t.begin();
 	t.color(255, 255, 255, 255);
-	for (int i = 0; i < 6; i++) {
-		for (unsigned int i = 0; i < cubes.size(); ++i)
-			cubes[i]->compile(t, scale);
-	}
+	for (unsigned int i = 0; i < cubes.size(); ++i)
+		cubes[i]->compile(t, scale);
 	t.end(true, vboId);
 #ifndef OPENGL_ES
 	glEndList();
