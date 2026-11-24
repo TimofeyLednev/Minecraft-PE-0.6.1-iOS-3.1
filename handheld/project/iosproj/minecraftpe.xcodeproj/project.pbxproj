@@ -5813,8 +5813,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = PUBLISH;
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -5824,11 +5825,12 @@
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-fomit-frame-pointer",
 					"-ffast-math",
+					"-fno-strict-aliasing",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
-					"-DGFX_SMALLER_CHUNKS",
 				);
+				GCC_OPTIMIZATION_LEVEL = s;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
@@ -5843,6 +5845,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -5866,6 +5869,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -5885,6 +5889,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -5936,6 +5941,7 @@
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = PUBLISH;
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -5946,11 +5952,12 @@
 					"-DANDROID_PUBLISH",
 					"-fomit-frame-pointer",
 					"-ffast-math",
+					"-fno-strict-aliasing",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
-					"-DGFX_SMALLER_CHUNKS",
 				);
+				GCC_OPTIMIZATION_LEVEL = s;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
@@ -5966,6 +5973,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -6048,6 +6056,7 @@
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -6056,11 +6065,12 @@
 				OTHER_CFLAGS = (
 					"-fomit-frame-pointer",
 					"-ffast-math",
+					"-fno-strict-aliasing",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
-					"-DGFX_SMALLER_CHUNKS",
 				);
+				GCC_OPTIMIZATION_LEVEL = s;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
@@ -6076,8 +6086,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "minecraftpe/minecraftpe-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = PUBLISH;
 				"GCC_THUMB_SUPPORT[arch=armv7]" = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				HEADER_SEARCH_PATHS = "";
@@ -6087,11 +6098,12 @@
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-fomit-frame-pointer",
 					"-ffast-math",
+					"-fno-strict-aliasing",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
-					"-DGFX_SMALLER_CHUNKS",
 				);
+				GCC_OPTIMIZATION_LEVEL = s;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;

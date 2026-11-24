@@ -25,7 +25,7 @@ public:
     static const int C = 2; // The Z value of the plane's normal
     static const int D = 3; // The distance the plane is from the origin
 
-    float m_Frustum[16][16];
+    float m_Frustum[6][4];
     float proj[16];
     float modl[16];
     float clip[16];
@@ -58,14 +58,11 @@ public:
     {
         for (int i = 0; i < 6; i++)
         {
-            if (!(m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0)) return false;
-            if (!(m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0)) return false;
-            if (!(m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0)) return false;
-            if (!(m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0)) return false;
-            if (!(m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0)) return false;
-            if (!(m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0)) return false;
-            if (!(m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0)) return false;
-            if (!(m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0)) return false;
+            const float* p = m_Frustum[i];
+            const float px = p[A] >= 0 ? x1 : x2;
+            const float py = p[B] >= 0 ? y1 : y2;
+            const float pz = p[C] >= 0 ? z1 : z2;
+            if (!(p[A] * px + p[B] * py + p[C] * pz + p[D] > 0)) return false;
         }
     
         return true;
@@ -75,16 +72,11 @@ public:
     {
         for (int i = 0; i < 6; i++)
         {
-            if (m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0) continue;
-            if (m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0) continue;
-            if (m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0) continue;
-            if (m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z1) + m_Frustum[i][D] > 0) continue;
-            if (m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0) continue;
-            if (m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y1) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0) continue;
-            if (m_Frustum[i][A] * (x1) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0) continue;
-            if (m_Frustum[i][A] * (x2) + m_Frustum[i][B] * (y2) + m_Frustum[i][C] * (z2) + m_Frustum[i][D] > 0) continue;
-    
-            return false;
+            const float* p = m_Frustum[i];
+            const float fx = p[A] >= 0 ? x2 : x1;
+            const float fy = p[B] >= 0 ? y2 : y1;
+            const float fz = p[C] >= 0 ? z2 : z1;
+            if (p[A] * fx + p[B] * fy + p[C] * fz + p[D] <= 0) return false;
         }
     
         return true;

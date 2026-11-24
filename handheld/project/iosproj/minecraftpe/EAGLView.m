@@ -35,7 +35,7 @@
         eaglLayer.opaque = TRUE;
         eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
                                         [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,
-                                        kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat,
+                                        kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat,
                                         nil];
 
         if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]
@@ -93,12 +93,7 @@
         glGenRenderbuffersOES(1, &_depthRenderBuffer);
 		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _depthRenderBuffer);
         
-        GLenum depthFormat = GL_DEPTH_COMPONENT16_OES;
-		const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-		if (extensions && strstr(extensions, "GL_OES_depth24")) {
-			depthFormat = GL_DEPTH_COMPONENT24_OES;
-		}
-		glRenderbufferStorageOES(GL_RENDERBUFFER_OES, depthFormat, framebufferWidth, framebufferHeight);
+		glRenderbufferStorageOES(GL_RENDERBUFFER_OES, GL_DEPTH_COMPONENT16_OES, framebufferWidth, framebufferHeight);
 		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, _depthRenderBuffer);
         
         NSLog(@"Created framebuffer with size %d, %d\n", framebufferWidth, framebufferHeight);

@@ -17,6 +17,10 @@ public:
         frustum = Frustum::getFrustum();
     }
 
+    FrustumCuller(const float* projectionMatrix, const float* modelviewMatrix) {
+        frustum = Frustum::getFrustum(projectionMatrix, modelviewMatrix);
+    }
+
 	void prepare(float xOff, float yOff, float zOff) {
         this->xOff = xOff;
         this->yOff = yOff;

@@ -377,32 +377,32 @@ void Tesselator::draw()
 	tesselating = false;
 
 	if (vertices > 0) {
-		if (++vboId >= vboCounts)
-			vboId = 0;
+		const char* base = (const char*)_varray;
 
-		int bufferId = vboIds[vboId];
-		
-		int access = GL_DYNAMIC_DRAW;//(accessMode==ACCESS_DYNAMIC) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
-		int bytes = p * sizeof(VERTEX);
-		glBindBuffer2(GL_ARRAY_BUFFER, bufferId);
-		glBufferData2(GL_ARRAY_BUFFER, bytes, _varray, access); // GL_STREAM_DRAW
+#ifdef USE_VBO
+		if (vertices > 256) {
+			if (++vboId >= vboCounts)
+				vboId = 0;
+
+			int bufferId = vboIds[vboId];
+			int bytes = p * sizeof(VERTEX);
+			glBindBuffer2(GL_ARRAY_BUFFER, bufferId);
+			glBufferData2(GL_ARRAY_BUFFER, bytes, _varray, GL_DYNAMIC_DRAW);
+			base = NULL;
+		} else {
+			glBindBuffer2(GL_ARRAY_BUFFER, 0);
+		}
+#endif
 
 		if (hasTexture) {
-			glTexCoordPointer2(2, GL_FLOAT, VertexSizeBytes, (GLvoid*) (3 * 4));
-			//glTexCoordPointer2(2, GL_FLOAT, VertexSizeBytes, (GLvoid*) &_varray->u);
+			glTexCoordPointer2(2, GL_FLOAT, VertexSizeBytes, (GLvoid*) (base + 3 * 4));
 			glEnableClientState2(GL_TEXTURE_COORD_ARRAY);
 		}
 		if (hasColor) {
-			glColorPointer2(4, GL_UNSIGNED_BYTE, VertexSizeBytes, (GLvoid*) (5 * 4));
-			//glColorPointer2(4, GL_UNSIGNED_BYTE, VertexSizeBytes, (GLvoid*) &_varray->color);
+			glColorPointer2(4, GL_UNSIGNED_BYTE, VertexSizeBytes, (GLvoid*) (base + 5 * 4));
 			glEnableClientState2(GL_COLOR_ARRAY);
 		}
-		//if (hasNormal) {
-		//	glNormalPointer(GL_BYTE, VertexSizeBytes, (GLvoid*) (6 * 4));
-		//	glEnableClientState2(GL_NORMAL_ARRAY);
-		//}
-		//glVertexPointer2(3, GL_FLOAT, VertexSizeBytes, (GLvoid*)&_varray);
-		glVertexPointer2(3, GL_FLOAT, VertexSizeBytes, 0);
+		glVertexPointer2(3, GL_FLOAT, VertexSizeBytes, (GLvoid*) base);
 		glEnableClientState2(GL_VERTEX_ARRAY);
 
 		if (mode == GL_QUADS) {
@@ -414,7 +414,6 @@ void Tesselator::draw()
 		glDisableClientState2(GL_VERTEX_ARRAY);
 		if (hasTexture) glDisableClientState2(GL_TEXTURE_COORD_ARRAY);
 		if (hasColor) glDisableClientState2(GL_COLOR_ARRAY);
-		//if (hasNormal) glDisableClientState2(GL_NORMAL_ARRAY);
 	}
 
 	clear();

@@ -86,6 +86,9 @@ private:
     int culledEntities;
 
 	std::vector<Chunk*> _renderChunks;
+	std::vector<Chunk*> _nearDirtyChunks;
+	std::vector<Chunk*> _dirtyPendingScratch;
+	std::vector<Entity*> _renderEntities;
 
     int cullStep;
 	//static const int renderListsLength = 4;
